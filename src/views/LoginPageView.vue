@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import LoginBoard from '@/components/LoginBoard.vue'
 </script>
 
