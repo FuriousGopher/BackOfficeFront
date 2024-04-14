@@ -3,7 +3,7 @@
     <q-layout view="lHh Lpr lff" container style="height: 96vh" class="shadow-2 rounded-borders">
       <q-header elevated class="bg-cyan-8">
         <q-toolbar>
-          <q-toolbar-title>Header</q-toolbar-title>
+          <q-toolbar-title>ClearVue</q-toolbar-title>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
         </q-toolbar>
       </q-header>
@@ -21,44 +21,16 @@
             align="justify"
             vertical
           >
-            <q-tab name="mails" label="Sites" />
-            <q-tab name="alarms" label="Meters" />
-            <q-tab name="movies" label="Customers" />
+            <q-tab name="customers" label="Customers" />
+            <q-tab name="sites" label="Sites" />
+            <q-tab name="meters" label="Meters" />
+            <q-tab name="circuits" label="Circuits" />
           </q-tabs>
-          <!--         <q-list padding>
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="folder" />
-              </q-item-section>
-              <q-item-section>Customers</q-item-section>
-            </q-item>
-
-            <q-item active clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="star" />
-              </q-item-section>
-
-              <q-item-section>Star</q-item-section>
-            </q-item>
-
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="send" />
-              </q-item-section>
-
-              <q-item-section> Send </q-item-section>
-            </q-item>
-
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="drafts" />
-              </q-item-section>
-
-              <q-item-section> Drafts </q-item-section>
-            </q-item>
-          </q-list>-->
           <div class="logout">
             <button @click="logout">Logout</button>
+          </div>
+          <div class="create-agent">
+            <button @click="modalOpen = true" @closeModal="closeModal">Create new agent</button>
           </div>
         </q-scroll-area>
 
@@ -82,66 +54,77 @@
             transition-prev="slide-down"
             transition-next="slide-up"
           >
-            <q-tab-panel name="mails">
-              <div class="text-h4 q-mb-md">Mails</div>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque
-                magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima
-                assumenda consectetur culpa fuga nulla ullam. In, libero.
-              </p>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque
-                magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima
-                assumenda consectetur culpa fuga nulla ullam. In, libero.
-              </p>
-            </q-tab-panel>
-
-            <q-tab-panel name="alarms">
-              <div class="text-h4 q-mb-md">Alarms</div>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque
-                magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima
-                assumenda consectetur culpa fuga nulla ullam. In, libero.
-              </p>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque
-                magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima
-                assumenda consectetur culpa fuga nulla ullam. In, libero.
-              </p>
-            </q-tab-panel>
-
-            <q-tab-panel name="movies">
-              <div class="text-h4 q-mb-md">Movies</div>
+            <q-tab-panel name="customers">
+              <div class="text-h4 q-mb-md">Customers</div>
               <q-table :rows="customers" row-key="name" flat bordered @row-click="get" />
+            </q-tab-panel>
+
+            <q-tab-panel name="sites">
+              <div class="text-h4 q-mb-md">Sites</div>
+              <q-table :rows="sites" row-key="name" flat bordered @row-click="get" />
+            </q-tab-panel>
+
+            <q-tab-panel name="meters">
+              <div class="text-h4 q-mb-md">Meters</div>
+              <q-table :rows="meters" row-key="name" flat bordered @row-click="get" />
+            </q-tab-panel>
+            <q-tab-panel name="circuits">
+              <div class="text-h4 q-mb-md">Circuits</div>
+              <q-table :rows="meters" row-key="name" flat bordered @row-click="get" />
             </q-tab-panel>
           </q-tab-panels>
         </div>
       </q-page-container>
     </q-layout>
   </div>
+  <div>
+    <RegisterNewAgent :isOpen="modalOpen" />
+  </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import { getAllCustomers, logoutAgent } from '@/api/api.ts'
+import { onMounted, ref } from 'vue'
+import {
+  getAllCircuits,
+  getAllCustomers,
+  getAllMeters,
+  getAllSites,
+  logoutAgent
+} from '@/api/api.ts'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
 import { Loading } from 'quasar'
+import RegisterNewAgent from '@/components/RegisterNewAgent.vue'
 
 const $toast = useToast()
 
 export default {
+  components: { RegisterNewAgent },
   setup() {
     const drawer = ref(false)
     const customers = ref([])
-    const tab = ref('mails')
+    const meters = ref([])
+    const sites = ref([])
+    const circuits = ref([])
+    const tab = ref('customers')
+    const modalOpen = ref(false)
 
     onMounted(async () => {
       try {
         Loading.show()
-        const result = await getAllCustomers()
-        customers.value = result
+
+        const [customersPromise, sitesPromise, metersPromise, circuitsPromise] =
+          await Promise.allSettled([
+            getAllCustomers(),
+            getAllSites(),
+            getAllMeters(),
+            getAllCircuits()
+          ])
+        customers.value = customersPromise.value
+        sites.value = sitesPromise.value
+        meters.value = metersPromise.value
+        circuits.value = circuitsPromise.value
         Loading.hide()
       } catch (e) {
         $toast.error(e.response.data)
@@ -167,12 +150,26 @@ export default {
       }
     }
 
+    const openModal = () => {
+      modalOpen.value = true
+    }
+
+    const closeModal = () => {
+      modalOpen.value = false
+    }
+
     return {
       drawer,
       customers,
       logout,
       tab,
-      get
+      get,
+      meters,
+      sites,
+      circuits,
+      modalOpen,
+      closeModal,
+      openModal
     }
   }
 }
@@ -182,6 +179,12 @@ export default {
 .logout {
   position: fixed;
   bottom: 10px;
+  left: 10px;
+}
+
+.create-agent {
+  position: fixed;
+  bottom: 50px;
   left: 10px;
 }
 

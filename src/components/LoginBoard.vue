@@ -18,7 +18,7 @@
           </div>
           <button type="submit">Login</button>
         </form>
-        <p>If dont have accesses ask your manager</p>
+        <p>If you dont have access ask your manager</p>
       </div>
     </div>
   </div>
@@ -30,7 +30,6 @@ import { login } from '/src/api/api.ts'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
-import { Loading } from 'quasar'
 
 const email = ref('testIvan@gmail.com')
 const password = ref('q1w2e3r4')

@@ -24,6 +24,33 @@ export const getAllCustomers = async () => {
   }
 }
 
+export const getAllSites = async () => {
+  try {
+    const response = await instance.get(`/site/getAll`)
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const getAllMeters = async () => {
+  try {
+    const response = await instance.get(`/meter/getAll`)
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const getAllCircuits = async () => {
+  try {
+    const response = await instance.get(`/circuit/getAll`)
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
 export const logoutAgent = async () => {
   try {
     const response = await instance.post(`/auth/logout`)
