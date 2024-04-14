@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const BASE_URL = 'http://localhost:3003'
+export const BASE_URL = 'https://clearvue-back.onrender.com'
 const instance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true
@@ -18,6 +18,15 @@ export const login = async (data: { email: string; password: string }) => {
 export const getAllCustomers = async () => {
   try {
     const response = await instance.get(`/customer/getAll`)
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const logoutAgent = async () => {
+  try {
+    const response = await instance.post(`/auth/logout`)
     return await response.data
   } catch (e) {
     throw e as Error
