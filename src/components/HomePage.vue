@@ -30,7 +30,7 @@
             <button @click="logout">Logout</button>
           </div>
           <div class="create-agent">
-            <button @click="openModal">Create new agent</button>
+            <button @click="openAgentModal">Create new agent</button>
           </div>
         </q-scroll-area>
 
@@ -55,8 +55,12 @@
             transition-next="slide-up"
           >
             <q-tab-panel name="customers">
+              <div class="add-customer">
+                <q-btn color="primary" icon="add" label="Customer" @click="openCustomerModal" />
+              </div>
               <div class="text-h4 q-mb-md">Customers</div>
               <q-table :rows="customers" row-key="name" flat bordered @row-click="get" />
+              <h7>Click on customer to open info</h7>
             </q-tab-panel>
 
             <q-tab-panel name="sites">
@@ -78,7 +82,8 @@
     </q-layout>
   </div>
   <div>
-    <RegisterNewAgent :state="state" />
+    <RegisterNewAgent :state="stateAgent" />
+    <CreateNewCustomer :state="stateCustomer" />
   </div>
 </template>
 
@@ -96,11 +101,12 @@ import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
 import { Loading } from 'quasar'
 import RegisterNewAgent from '@/components/RegisterNewAgent.vue'
+import CreateNewCustomer from '@/components/CreateNewCustomer.vue'
 
 const $toast = useToast()
 
 export default {
-  components: { RegisterNewAgent },
+  components: { CreateNewCustomer, RegisterNewAgent },
   setup() {
     const drawer = ref(false)
     const customers = ref([])
@@ -108,7 +114,8 @@ export default {
     const sites = ref([])
     const circuits = ref([])
     const tab = ref('customers')
-    const state = reactive({ modalOpen: false })
+    const stateAgent = reactive({ modalOpen: false })
+    const stateCustomer = reactive({ modalOpen: false })
 
     onMounted(async () => {
       try {
@@ -150,12 +157,17 @@ export default {
       }
     }
 
-    const openModal = () => {
-      state.modalOpen = true
+    const openAgentModal = () => {
+      stateAgent.modalOpen = true
+    }
+
+    const openCustomerModal = () => {
+      stateCustomer.modalOpen = true
     }
 
     const closeModal = () => {
-      state.modalOpen = false
+      stateCustomer.modalOpen = false
+      stateAgent.modalOpen = false
     }
 
     return {
@@ -167,9 +179,11 @@ export default {
       meters,
       sites,
       circuits,
-      state,
       closeModal,
-      openModal
+      openAgentModal,
+      openCustomerModal,
+      stateCustomer,
+      stateAgent
     }
   }
 }
@@ -196,5 +210,10 @@ button {
   background-color: #007bff;
   color: #fff;
   cursor: pointer;
+}
+
+.add-customer {
+  display: flex;
+  flex-direction: row-reverse;
 }
 </style>

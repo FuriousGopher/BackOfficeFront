@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { Ref, UnwrapRef } from 'vue'
 
 export const BASE_URL = 'https://clearvue-back.onrender.com'
 const instance = axios.create({
@@ -65,6 +66,42 @@ export const createNewAgent = async (password: string, email: string) => {
     const response = await instance.post(`/admin/create-new-admin`, {
       password: password,
       email: email
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const checkIfAgentEmailExist = async (email: string) => {
+  try {
+    const response = await instance.post(`/admin/check-exist`, {
+      email
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const createNewCustomer = async (name: string, email: string, vatNumber: string) => {
+  try {
+    const response = await instance.post(`/customer/create`, {
+      name,
+      vatNumber,
+      email
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const deleteCustomer = async (id: number, isDelete: boolean) => {
+  try {
+    const response = await instance.put(`/customer/update`, {
+      id,
+      isDelete
     })
     return await response.data
   } catch (e) {

@@ -3,7 +3,9 @@
     <q-layout view="lHh Lpr lff" container style="height: 96vh" class="shadow-2 rounded-borders">
       <q-header elevated class="bg-cyan-8">
         <q-toolbar>
-          <q-toolbar-title>sdfsd</q-toolbar-title>
+          <q-toolbar-title>{{
+            customerData.length > 0 ? customerData[0].name : 'Customer Name'
+          }}</q-toolbar-title>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
         </q-toolbar>
       </q-header>
@@ -26,6 +28,9 @@
             <q-tab name="meters" label="Meters" />
             <q-tab name="circuits" label="Circuits" />
           </q-tabs>
+          <div class="back">
+            <button @click="goBack">Back</button>
+          </div>
           <div class="logout">
             <button @click="logout">Logout</button>
           </div>
@@ -54,6 +59,9 @@
             transition-next="slide-up"
           >
             <q-tab-panel name="customer">
+              <div class="delete-customer">
+                <q-btn color="primary" icon="delete" label="Customer" @click="prompt = true" />
+              </div>
               <div class="text-h4 q-mb-md">Customer info</div>
               <q-table :rows="customerData" row-key="name" flat bordered />
             </q-tab-panel>
@@ -75,13 +83,25 @@
       </q-page-container>
     </q-layout>
   </div>
+  <q-dialog v-model="prompt">
+    <q-card>
+      <q-card-section class="text-h6">Confirm Deletion</q-card-section>
+      <q-card-section>
+        {{ `Are you sure you want to delete ${customerData[0].name} customer ?` }}
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn label="Cancel" color="primary" @click="prompt = false" />
+        <q-btn label="Delete" color="negative" @click="confirmDelete" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
 import { useToast } from 'vue-toast-notification'
 import { onMounted, ref } from 'vue'
 import { Loading } from 'quasar'
-import { getAllCompanyInfo, logoutAgent } from '@/api/api'
+import { deleteCustomer, getAllCompanyInfo, logoutAgent } from '@/api/api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 
@@ -95,20 +115,22 @@ export default {
     const customerMeters = ref([])
     const customerCircuits = ref([])
     const tab = ref('customer')
+    const prompt = ref(false)
 
     const route = useRoute()
-    const id = route.query.id
+    const id = +route.query.id
 
     onMounted(async () => {
       try {
         Loading.show()
-        const allInfo = await getAllCompanyInfo(+id)
+        const allInfo = await getAllCompanyInfo(id)
         customerData.value = allInfo.customerInfo || []
         customerSites.value = allInfo.allSites || []
         customerMeters.value = allInfo.allMeters || []
         customerCircuits.value = allInfo.allCircuits || []
         Loading.hide()
         $toast.success('All data is loaded successfully')
+        console.log()
       } catch (e) {
         $toast.error(e.response)
         Loading.hide()
@@ -126,6 +148,24 @@ export default {
       }
     }
 
+    const confirmDelete = async () => {
+      try {
+        await deleteCustomer(id, true)
+        $toast.success('Customer deleted successfully')
+        prompt.value = false
+        router.push('/home')
+      } catch (e) {
+        $toast.error(e.response.data)
+      }
+    }
+
+    const goBack = async () => {
+      Loading.show()
+      router.push('/home')
+      $toast.success('Back home')
+      Loading.hide()
+    }
+
     return {
       drawer,
       tab,
@@ -133,10 +173,23 @@ export default {
       customerData,
       customerSites,
       customerMeters,
-      customerCircuits
+      customerCircuits,
+      goBack,
+      prompt,
+      confirmDelete
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.back {
+  position: fixed;
+  left: 10px;
+}
+
+.delete-customer {
+  display: flex;
+  flex-direction: row-reverse;
+}
+</style>
