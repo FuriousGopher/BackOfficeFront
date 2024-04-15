@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 const props = defineProps<{
@@ -27,14 +27,17 @@ const props = defineProps<{
 }>()
 const childState = reactive(props.state)
 const $toast = useToast()
+const email = ref('')
+const name = ref('')
 
 const closeModal = () => {
   childState.modalOpen = false
 }
 const registerAgent = async () => {
   try {
+    console.log(name, email)
     childState.modalOpen = false
-  } catch (e) {
+  } catch (e: any) {
     $toast.error(e)
   }
 }
