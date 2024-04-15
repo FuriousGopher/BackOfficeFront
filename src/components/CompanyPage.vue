@@ -3,7 +3,7 @@
     <q-layout view="lHh Lpr lff" container style="height: 96vh" class="shadow-2 rounded-borders">
       <q-header elevated class="bg-cyan-8">
         <q-toolbar>
-          <q-toolbar-title>Customer name</q-toolbar-title>
+          <q-toolbar-title>sdfsd</q-toolbar-title>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
         </q-toolbar>
       </q-header>
@@ -21,11 +21,10 @@
             align="justify"
             vertical
           >
-            <q-tab name="customers" label="Customers" />
+            <q-tab name="customer" label="Customer info" />
             <q-tab name="sites" label="Sites" />
             <q-tab name="meters" label="Meters" />
             <q-tab name="circuits" label="Circuits" />
-            <q-tab name="customerSites" label="CustomerSites" />
           </q-tabs>
           <div class="logout">
             <button @click="logout">Logout</button>
@@ -38,7 +37,9 @@
           style="height: 150px"
         >
           <div class="absolute-bottom bg-transparent">
-            <q-avatar size="56px" class="q-mb-sm"> <img src="/avatar.png" /> /> </q-avatar>
+            <q-avatar size="56px" class="q-mb-sm">
+              <img src="/avatar.png" alt="img" /> />
+            </q-avatar>
             <div class="text-weight-bold">Agent Name</div>
             <div>@clearvueagent</div>
           </div>
@@ -52,26 +53,22 @@
             transition-prev="slide-down"
             transition-next="slide-up"
           >
-            <q-tab-panel name="customers">
-              <div class="text-h4 q-mb-md">Customers</div>
-              <q-table :rows="customers" row-key="name" flat bordered />
+            <q-tab-panel name="customer">
+              <div class="text-h4 q-mb-md">Customer info</div>
+              <q-table :rows="customerData" row-key="name" flat bordered />
             </q-tab-panel>
 
             <q-tab-panel name="sites">
               <div class="text-h4 q-mb-md">Sites</div>
-              <q-table :rows="sites" row-key="name" flat bordered />
+              <q-table :rows="customerSites" row-key="name" flat bordered />
             </q-tab-panel>
             <q-tab-panel name="meters">
               <div class="text-h4 q-mb-md">Meters</div>
-              <q-table :rows="meters" row-key="name" flat bordered />
+              <q-table :rows="customerMeters" row-key="name" flat bordered />
             </q-tab-panel>
             <q-tab-panel name="circuits">
               <div class="text-h4 q-mb-md">Circuits</div>
-              <q-table :rows="meters" row-key="name" flat bordered />
-            </q-tab-panel>
-            <q-tab-panel name="customerSites" v-if="customerData.length > 0">
-              <div class="text-h4 q-mb-md">CustomerSites</div>
-              <q-table :rows="customerSites" row-key="name" flat bordered />
+              <q-table :rows="customerCircuits" row-key="name" flat bordered />
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -82,16 +79,9 @@
 
 <script>
 import { useToast } from 'vue-toast-notification'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Loading } from 'quasar'
-import {
-  getAllCircuits,
-  getAllCompanyInfo,
-  getAllCustomers,
-  getAllMeters,
-  getAllSites,
-  logoutAgent
-} from '@/api/api'
+import { getAllCompanyInfo, logoutAgent } from '@/api/api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 
@@ -100,16 +90,11 @@ const $toast = useToast()
 export default {
   setup() {
     const drawer = ref(false)
-    const customers = ref([])
-    const meters = ref([])
-    const sites = ref([])
     const customerData = ref([])
     const customerSites = ref([])
     const customerMeters = ref([])
     const customerCircuits = ref([])
-    const circuits = ref([])
-    const tab = ref('customers')
-    const state = reactive({ modalOpen: false })
+    const tab = ref('customer')
 
     const route = useRoute()
     const id = route.query.id
@@ -117,41 +102,18 @@ export default {
     onMounted(async () => {
       try {
         Loading.show()
-        const [customersPromise, sitesPromise, metersPromise, circuitsPromise, result] =
-          await Promise.allSettled([
-            getAllCustomers(),
-            getAllSites(),
-            getAllMeters(),
-            getAllCircuits(),
-            getAllCompanyInfo(+id)
-          ])
-        customers.value = customersPromise.value
-        sites.value = sitesPromise.value
-        meters.value = metersPromise.value
-        circuits.value = circuitsPromise.value
-        customerData.value = result.value
-        console.log(result.value)
-        if (customerData.value) {
-          customerSites.value = customerData.value[0].sites || []
-
-          customerMeters.value = customerSites.value.flatMap((site) => site.meters || [])
-
-          customerCircuits.value = customerMeters.value.flatMap((meter) => meter.circuits || [])
-        }
+        const allInfo = await getAllCompanyInfo(+id)
+        customerData.value = allInfo.customerInfo || []
+        customerSites.value = allInfo.allSites || []
+        customerMeters.value = allInfo.allMeters || []
+        customerCircuits.value = allInfo.allCircuits || []
         Loading.hide()
         $toast.success('All data is loaded successfully')
       } catch (e) {
-        $toast.error(e.response.data)
+        $toast.error(e.response)
+        Loading.hide()
       }
     })
-
-    const openModal = () => {
-      state.modalOpen = true
-    }
-
-    const closeModal = () => {
-      state.modalOpen = false
-    }
 
     const logout = async () => {
       try {
@@ -166,14 +128,7 @@ export default {
 
     return {
       drawer,
-      customers,
       tab,
-      meters,
-      sites,
-      circuits,
-      state,
-      closeModal,
-      openModal,
       logout,
       customerData,
       customerSites,
