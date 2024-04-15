@@ -30,7 +30,7 @@
             <button @click="logout">Logout</button>
           </div>
           <div class="create-agent">
-            <button @click="modalOpen = true" @closeModal="closeModal">Create new agent</button>
+            <button @click="openModal">Create new agent</button>
           </div>
         </q-scroll-area>
 
@@ -78,12 +78,12 @@
     </q-layout>
   </div>
   <div>
-    <RegisterNewAgent :isOpen="modalOpen" />
+    <RegisterNewAgent :state="state" />
   </div>
 </template>
 
 <script>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import {
   getAllCircuits,
   getAllCustomers,
@@ -108,12 +108,11 @@ export default {
     const sites = ref([])
     const circuits = ref([])
     const tab = ref('customers')
-    const modalOpen = ref(false)
+    const state = reactive({ modalOpen: false })
 
     onMounted(async () => {
       try {
         Loading.show()
-
         const [customersPromise, sitesPromise, metersPromise, circuitsPromise] =
           await Promise.allSettled([
             getAllCustomers(),
@@ -126,6 +125,7 @@ export default {
         meters.value = metersPromise.value
         circuits.value = circuitsPromise.value
         Loading.hide()
+        $toast.success('All data is loaded successfully')
       } catch (e) {
         $toast.error(e.response.data)
       }
@@ -151,11 +151,11 @@ export default {
     }
 
     const openModal = () => {
-      modalOpen.value = true
+      state.modalOpen = true
     }
 
     const closeModal = () => {
-      modalOpen.value = false
+      state.modalOpen = false
     }
 
     return {
@@ -167,7 +167,7 @@ export default {
       meters,
       sites,
       circuits,
-      modalOpen,
+      state,
       closeModal,
       openModal
     }
