@@ -60,10 +60,11 @@ export const logoutAgent = async () => {
   }
 }
 
-export const getGamaData = async (query = '') => {
+export const createNewAgent = async (password: string, email: string) => {
   try {
-    const response = await instance.get(`/send`, {
-      params: { title: query }
+    const response = await instance.post(`/admin/create-new-admin`, {
+      password: password,
+      email: email
     })
     return await response.data
   } catch (e) {
