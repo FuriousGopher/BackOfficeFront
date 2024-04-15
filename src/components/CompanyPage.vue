@@ -3,7 +3,7 @@
     <q-layout view="lHh Lpr lff" container style="height: 96vh" class="shadow-2 rounded-borders">
       <q-header elevated class="bg-cyan-8">
         <q-toolbar>
-          <q-toolbar-title>ClearVue</q-toolbar-title>
+          <q-toolbar-title>Customer name</q-toolbar-title>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
         </q-toolbar>
       </q-header>
@@ -25,12 +25,10 @@
             <q-tab name="sites" label="Sites" />
             <q-tab name="meters" label="Meters" />
             <q-tab name="circuits" label="Circuits" />
+            <q-tab name="customerSites" label="CustomerSites" />
           </q-tabs>
           <div class="logout">
             <button @click="logout">Logout</button>
-          </div>
-          <div class="create-agent">
-            <button @click="openModal">Create new agent</button>
           </div>
         </q-scroll-area>
 
@@ -56,14 +54,13 @@
           >
             <q-tab-panel name="customers">
               <div class="text-h4 q-mb-md">Customers</div>
-              <q-table :rows="customers" row-key="name" flat bordered @row-click="get" />
+              <q-table :rows="customers" row-key="name" flat bordered />
             </q-tab-panel>
 
             <q-tab-panel name="sites">
               <div class="text-h4 q-mb-md">Sites</div>
               <q-table :rows="sites" row-key="name" flat bordered />
             </q-tab-panel>
-
             <q-tab-panel name="meters">
               <div class="text-h4 q-mb-md">Meters</div>
               <q-table :rows="meters" row-key="name" flat bordered />
@@ -72,64 +69,89 @@
               <div class="text-h4 q-mb-md">Circuits</div>
               <q-table :rows="meters" row-key="name" flat bordered />
             </q-tab-panel>
+            <q-tab-panel name="customerSites" v-if="customerData.length > 0">
+              <div class="text-h4 q-mb-md">CustomerSites</div>
+              <q-table :rows="customerSites" row-key="name" flat bordered />
+            </q-tab-panel>
           </q-tab-panels>
         </div>
       </q-page-container>
     </q-layout>
   </div>
-  <div>
-    <RegisterNewAgent :state="state" />
-  </div>
 </template>
 
 <script>
+import { useToast } from 'vue-toast-notification'
 import { onMounted, reactive, ref } from 'vue'
+import { Loading } from 'quasar'
 import {
   getAllCircuits,
+  getAllCompanyInfo,
   getAllCustomers,
   getAllMeters,
   getAllSites,
   logoutAgent
-} from '@/api/api.ts'
-import { useToast } from 'vue-toast-notification'
-import 'vue-toast-notification/dist/theme-sugar.css'
-import router from '@/router/index.ts'
-import { Loading } from 'quasar'
-import RegisterNewAgent from '@/components/RegisterNewAgent.vue'
+} from '@/api/api'
+import router from '@/router'
+import { useRoute } from 'vue-router'
 
 const $toast = useToast()
 
 export default {
-  components: { RegisterNewAgent },
   setup() {
     const drawer = ref(false)
     const customers = ref([])
     const meters = ref([])
     const sites = ref([])
+    const customerData = ref([])
+    const customerSites = ref([])
+    const customerMeters = ref([])
+    const customerCircuits = ref([])
     const circuits = ref([])
     const tab = ref('customers')
     const state = reactive({ modalOpen: false })
 
+    const route = useRoute()
+    const id = route.query.id
+
     onMounted(async () => {
       try {
         Loading.show()
-        const [customersPromise, sitesPromise, metersPromise, circuitsPromise] =
+        const [customersPromise, sitesPromise, metersPromise, circuitsPromise, result] =
           await Promise.allSettled([
             getAllCustomers(),
             getAllSites(),
             getAllMeters(),
-            getAllCircuits()
+            getAllCircuits(),
+            getAllCompanyInfo(+id)
           ])
         customers.value = customersPromise.value
         sites.value = sitesPromise.value
         meters.value = metersPromise.value
         circuits.value = circuitsPromise.value
+        customerData.value = result.value
+        console.log(result.value)
+        if (customerData.value) {
+          customerSites.value = customerData.value[0].sites || []
+
+          customerMeters.value = customerSites.value.flatMap((site) => site.meters || [])
+
+          customerCircuits.value = customerMeters.value.flatMap((meter) => meter.circuits || [])
+        }
         Loading.hide()
         $toast.success('All data is loaded successfully')
       } catch (e) {
         $toast.error(e.response.data)
       }
     })
+
+    const openModal = () => {
+      state.modalOpen = true
+    }
+
+    const closeModal = () => {
+      state.modalOpen = false
+    }
 
     const logout = async () => {
       try {
@@ -142,59 +164,24 @@ export default {
       }
     }
 
-    const get = async (_props, row) => {
-      try {
-        router.push({ path: '/company', query: { id: row.id } })
-      } catch (e) {
-        $toast.error(e)
-      }
-    }
-
-    const openModal = () => {
-      state.modalOpen = true
-    }
-
-    const closeModal = () => {
-      state.modalOpen = false
-    }
-
     return {
       drawer,
       customers,
-      logout,
       tab,
-      get,
       meters,
       sites,
       circuits,
       state,
       closeModal,
-      openModal
+      openModal,
+      logout,
+      customerData,
+      customerSites,
+      customerMeters,
+      customerCircuits
     }
   }
 }
 </script>
 
-<style>
-.logout {
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
-}
-
-.create-agent {
-  position: fixed;
-  bottom: 50px;
-  left: 10px;
-}
-
-button {
-  padding: 8px;
-  border: none;
-  width: 180px;
-  border-radius: 3px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-}
-</style>
+<style scoped></style>

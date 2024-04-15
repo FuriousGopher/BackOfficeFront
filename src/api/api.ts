@@ -72,15 +72,9 @@ export const createNewAgent = async (password: string, email: string) => {
   }
 }
 
-export const spinSlotMachine = async () => {
+export const getAllCompanyInfo = async (id: number) => {
   try {
-    const response = await instance.post(
-      `/slot-machine/spin`,
-      {},
-      {
-        withCredentials: true
-      }
-    )
+    const response = await instance.get(`/customer/getAllInfo?id=${id}`)
     return await response.data
   } catch (e) {
     throw e as Error
