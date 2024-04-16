@@ -1,5 +1,4 @@
 import axios from 'axios'
-import type { Ref, UnwrapRef } from 'vue'
 
 export const BASE_URL = 'https://clearvue-back.onrender.com'
 const instance = axios.create({
@@ -112,6 +111,29 @@ export const deleteCustomer = async (id: number, isDelete: boolean) => {
 export const getAllCompanyInfo = async (id: number) => {
   try {
     const response = await instance.get(`/customer/getAllInfo?id=${id}`)
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const updateSite = async (
+  id: number,
+  name: string,
+  address: string,
+  post_code: string,
+  coordinates: string,
+  isDelete: boolean
+) => {
+  try {
+    const response = await instance.put('/site/update', {
+      id,
+      name,
+      address,
+      post_code,
+      coordinates,
+      isDelete
+    })
     return await response.data
   } catch (e) {
     throw e as Error

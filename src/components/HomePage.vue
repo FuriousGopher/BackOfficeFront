@@ -60,7 +60,6 @@
               </div>
               <div class="text-h4 q-mb-md">Customers</div>
               <q-table :rows="customers" row-key="name" flat bordered @row-click="get" />
-
               <h7>Click on customer to open info</h7>
             </q-tab-panel>
 
@@ -76,7 +75,7 @@
                 <template v-slot:body-cell-action="{ row }">
                   <q-td>
                     <div class="row justify-center">
-                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                      <q-btn @click="openSiteModal(row)" icon="edit" />
                     </div>
                   </q-td>
                 </template>
@@ -128,6 +127,7 @@
   <div>
     <RegisterNewAgent :state="stateAgent" />
     <CreateNewCustomer :state="stateCustomer" />
+    <UpdateSiteModal :state="stateSite" :modalData="modalData" />
   </div>
 </template>
 
@@ -144,9 +144,10 @@ import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
 import { Loading } from 'quasar'
-import RegisterNewAgent from '@/components/RegisterNewAgent.vue'
-import CreateNewCustomer from '@/components/CreateNewCustomer.vue'
+import RegisterNewAgent from '@/Modals/RegisterNewAgent.vue'
+import CreateNewCustomer from '@/Modals/CreateNewCustomer.vue'
 import { columnsView } from '@/helpers/columnsView.ts'
+import UpdateSiteModal from '@/Modals/UpdateSiteModal.vue'
 
 const $toast = useToast()
 
@@ -156,7 +157,7 @@ export default {
       return columnsView
     }
   },
-  components: { CreateNewCustomer, RegisterNewAgent },
+  components: { UpdateSiteModal, CreateNewCustomer, RegisterNewAgent },
   setup() {
     const drawer = ref(false)
     const customers = ref([])
@@ -166,6 +167,8 @@ export default {
     const tab = ref('customers')
     const stateAgent = reactive({ modalOpen: false })
     const stateCustomer = reactive({ modalOpen: false })
+    const stateSite = reactive({ modalOpen: false })
+    const modalData = ref(null)
 
     onMounted(async () => {
       try {
@@ -211,6 +214,11 @@ export default {
       stateAgent.modalOpen = true
     }
 
+    const openSiteModal = (data) => {
+      modalData.value = data
+      stateSite.modalOpen = true
+    }
+
     const openCustomerModal = () => {
       stateCustomer.modalOpen = true
     }
@@ -218,6 +226,7 @@ export default {
     const closeModal = () => {
       stateCustomer.modalOpen = false
       stateAgent.modalOpen = false
+      stateSite.modalOpen = false
     }
 
     const handleButtonClick = async (props) => {
@@ -238,7 +247,10 @@ export default {
       openCustomerModal,
       stateCustomer,
       stateAgent,
-      handleButtonClick
+      handleButtonClick,
+      openSiteModal,
+      stateSite,
+      modalData
     }
   }
 }
