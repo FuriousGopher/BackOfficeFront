@@ -2,7 +2,7 @@
   <q-dialog v-model="childState.modalOpen">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Create New Customer</div>
+        <div class="text-h6">Create Neeeew Customer</div>
       </q-card-section>
       <q-card-section>
         <q-input dense v-model="name" label="Name" outlined />
