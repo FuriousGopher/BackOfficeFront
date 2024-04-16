@@ -195,10 +195,11 @@ export default {
       try {
         Loading.show()
         const allInfo = await getAllCompanyInfo(id)
-        customerData.value = allInfo.customerInfo || []
-        customerSites.value = allInfo.allSites || []
-        customerMeters.value = allInfo.allMeters || []
-        customerCircuits.value = allInfo.allCircuits || []
+        customerData.value = allInfo.customer || []
+        customerSites.value = allInfo.sites || []
+        customerMeters.value = allInfo.meters || []
+        customerCircuits.value = allInfo.circuits || []
+        console.log(allInfo)
         Loading.hide()
         $toast.success('All data is loaded successfully')
       } catch (e) {
