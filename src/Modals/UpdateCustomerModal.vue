@@ -44,11 +44,11 @@ const makeUpdate = async () => {
   try {
     const result = await updateCustomer(
       props.modalData.id,
+      isDelete.value,
       name.value,
       address.value,
       post_code.value,
-      coordinates.value,
-      isDelete.value
+      coordinates.value
     )
     $toast.success(result)
     address.value = name.value = coordinates.value = post_code.value = isDelete.value = false
