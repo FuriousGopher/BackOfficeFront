@@ -34,7 +34,7 @@ export const columnsView = {
       name: 'createdAt',
       align: 'center',
       label: 'Created At',
-      field: (row: any) => row.createdAt,
+      field: (row: any) => formatCreatedAt(row.createdAt),
       sortable: true
     },
     {
@@ -71,13 +71,45 @@ export const columnsView = {
       name: 'createdAt',
       align: 'center',
       label: 'Created At',
-      field: (row: any) => row.createdAt,
+      field: (row: any) => formatCreatedAt(row.createdAt),
       sortable: true
     },
     {
       name: 'action',
       align: 'center',
       label: 'Update'
+    }
+  ],
+  customersColumns: [
+    {
+      name: 'id',
+      required: true,
+      label: 'ID',
+      align: 'left',
+      field: (row: any) => row.id,
+      sortable: true
+    },
+    { name: 'name', align: 'center', label: 'Name', field: (row: any) => row.name, sortable: true },
+    {
+      name: 'email',
+      align: 'center',
+      label: 'Email',
+      field: (row: any) => row.email,
+      sortable: true
+    },
+    {
+      name: 'vat_number',
+      align: 'center',
+      label: 'Vat number',
+      field: (row: any) => row.vat_number,
+      sortable: true
+    },
+    {
+      name: 'createdAt',
+      align: 'center',
+      label: 'Created At',
+      field: (row: any) => formatCreatedAt(row.createdAt),
+      sortable: true
     }
   ],
   meterColumns: [
@@ -101,7 +133,7 @@ export const columnsView = {
       name: 'installationDate',
       align: 'center',
       label: 'Installation date',
-      field: (row: any) => row.installationDate,
+      field: (row: any) => formatCreatedAt(row.installationDate),
       sortable: true
     },
     {
@@ -124,14 +156,14 @@ export const columnsView = {
       name: 'installationDate',
       align: 'center',
       label: 'Installation date',
-      field: (row: any) => row.installationDate,
+      field: (row: any) => formatCreatedAt(row.installationDate),
       sortable: true
     },
     {
       name: 'is_main',
       align: 'center',
       label: 'Main',
-      field: (row: any) => row.is_main,
+      field: (row: any) => (row.is_main ? 'Main' : ''),
       sortable: true
     },
     {
@@ -140,4 +172,9 @@ export const columnsView = {
       label: 'Update'
     }
   ]
+}
+
+export function formatCreatedAt(createdAt: string): string {
+  const date = new Date(createdAt)
+  return date.toLocaleString()
 }

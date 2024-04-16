@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
-import { createNewAgent } from '@/api/api'
 import { checkEmailExist, emailRule, passwordRule } from '@/helpers/validators'
+import { createNewAgent } from '@/api/agentApi'
 
 const props = defineProps<{
   state?: any

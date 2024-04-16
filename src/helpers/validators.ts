@@ -1,4 +1,4 @@
-import { checkIfAgentEmailExist } from '@/api/api'
+import { checkIfAgentEmailExist } from '@/api/agentApi'
 
 export const emailRule = (value: string) => {
   const emailRegex = /\S+@\S+\.\S+/

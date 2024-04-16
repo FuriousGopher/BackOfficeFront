@@ -59,7 +59,14 @@
                 <q-btn color="primary" icon="add" label="Customer" @click="openCustomerModal" />
               </div>
               <div class="text-h4 q-mb-md">Customers</div>
-              <q-table :rows="customers" row-key="name" flat bordered @row-click="get" />
+              <q-table
+                :rows="customers"
+                row-key="name"
+                flat
+                bordered
+                @row-click="get"
+                :columns="columnsView.customersColumns"
+              />
               <p class="click-info">Click on customer to open info</p>
             </q-tab-panel>
 
@@ -76,7 +83,7 @@
                   <q-td>
                     <div class="row justify-center">
                       <q-btn @click="openSiteModal(row)" icon="edit" />
-                      <q-btn @click="deleteRowSite(row.id)" icon="delete" />
+                      <q-btn @click="deleteOneRow(row.id, 'site')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -96,6 +103,7 @@
                   <q-td>
                     <div class="row justify-center">
                       <q-btn @click="openMeterModal(row)" icon="edit" />
+                      <q-btn @click="deleteOneRow(row.id, 'meter')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -105,7 +113,7 @@
             <q-tab-panel name="circuits">
               <div class="text-h4 q-mb-md">Circuits</div>
               <q-table
-                :rows="meters"
+                :rows="circuits"
                 row-key="name"
                 flat
                 bordered
@@ -115,6 +123,7 @@
                   <q-td>
                     <div class="row justify-center">
                       <q-btn @click="openCircuitsModal(row)" icon="edit" />
+                      <q-btn @click="deleteOneRow(row.id, 'circuit')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -136,14 +145,6 @@
 
 <script>
 import { onMounted, reactive, ref } from 'vue'
-import {
-  getAllCircuits,
-  getAllCustomers,
-  getAllMeters,
-  getAllSites,
-  logoutAgent,
-  updateSite
-} from '@/api/api.ts'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
@@ -154,6 +155,12 @@ import { columnsView } from '@/helpers/columnsView.ts'
 import UpdateSiteModal from '@/Modals/UpdateSiteModal.vue'
 import UpdateMeterModal from '@/Modals/UpdateMeterModal.vue'
 import UpdateCircuitModal from '@/Modals/UpdateCircuitModal.vue'
+import { getAllCustomers } from '@/api/customersApi.ts'
+import { getAllSites } from '@/api/sitesApi.ts'
+import { getAllMeters } from '@/api/metersApi.ts'
+import { getAllCircuits } from '@/api/circuitsApi.ts'
+import { logoutAgent } from '@/api/agentApi.ts'
+import { callDeleteRow } from '@/helpers/utils.ts'
 
 const $toast = useToast()
 
@@ -240,14 +247,13 @@ export default {
       stateMeter.modalOpen = true
     }
 
-    const deleteRowSite = async (id) => {
+    const deleteOneRow = async (id, name) => {
       try {
-        const result = await updateSite(id, true)
+        const result = await callDeleteRow(id, true, name)
         $toast.success(result)
         window.location.reload()
       } catch (e) {
-        //TODO move to some file
-        $toast.error(e.response.data)
+        $toast.error(e.response.data.errorsMessages[0].message)
       }
     }
 
@@ -296,7 +302,7 @@ export default {
       openCircuitsModal,
       openMeterModal,
       stateMeter,
-      deleteRowSite
+      deleteOneRow
     }
   }
 }

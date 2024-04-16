@@ -9,7 +9,6 @@
         <q-input dense v-model="address" label="Address" outlined />
         <q-input dense v-model="coordinates" label="Coordinates" outlined :rules="[]" />
         <q-input dense v-model="post_code" label="Post code" outlined :rules="[]" />
-        <q-toggle v-model="isDelete" label="Delete" />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn label="Cancel" color="primary" @click="closeModal" />
@@ -22,7 +21,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
-import { updateCustomer } from '@/api/api'
+import { updateCustomer } from '@/api/customersApi'
 
 const props = defineProps<{
   state?: any
@@ -34,7 +33,6 @@ const address = ref()
 const coordinates = ref()
 const name = ref()
 const post_code = ref()
-const isDelete = ref(false)
 
 const closeModal = () => {
   childState.modalOpen = false
@@ -44,15 +42,13 @@ const makeUpdate = async () => {
   try {
     const result = await updateCustomer(
       props.modalData.id,
-      isDelete.value,
       name.value,
       address.value,
       post_code.value,
       coordinates.value
     )
     $toast.success(result)
-    address.value = name.value = coordinates.value = post_code.value = isDelete.value = false
-    childState.modalOpen = false
+    address.value = name.value = coordinates.value = post_code.value = childState.modalOpen = false
     window.location.reload()
   } catch (e: any) {
     $toast.error(e.response.data)

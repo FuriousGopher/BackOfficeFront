@@ -150,7 +150,7 @@
     <q-card>
       <q-card-section class="text-h6">Confirm Deletion</q-card-section>
       <q-card-section>
-        {{ `Are you sure you want to delete ${customerData[0].name} customer ?` }}
+        {{ `Are you sure you want to delete ${customerData[0].name}  customer ?` }}
       </q-card-section>
       <q-card-actions align="right">
         <q-btn label="Cancel" color="primary" @click="deleteModalState = false" />
@@ -164,10 +164,12 @@
 import { useToast } from 'vue-toast-notification'
 import { onMounted, ref } from 'vue'
 import { Loading } from 'quasar'
-import { deleteCustomer, getAllCompanyInfo, logoutAgent } from '@/api/api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { columnsView } from '@/helpers/columnsView.ts'
+import { getAllCompanyInfo } from '@/api/customersApi.ts'
+import { logoutAgent } from '@/api/agentApi.ts'
+import { callDeleteRow } from '@/helpers/utils.ts'
 
 const $toast = useToast()
 
@@ -218,7 +220,7 @@ export default {
 
     const confirmDelete = async () => {
       try {
-        await deleteCustomer(id, true)
+        await callDeleteRow(id, true, 'customer')
         $toast.success('Customer deleted successfully')
         deleteModalState.value = false
         router.push('/home')

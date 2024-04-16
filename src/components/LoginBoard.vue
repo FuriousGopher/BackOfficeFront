@@ -26,10 +26,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { login } from '/src/api/api.ts'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
+import { login } from '@/api/agentApi.ts'
 
 const email = ref('testIvan@gmail.com')
 const password = ref('q1w2e3r4')

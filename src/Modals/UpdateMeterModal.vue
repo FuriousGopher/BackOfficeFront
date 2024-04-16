@@ -6,10 +6,8 @@
       </q-card-section>
       <q-card-section>
         <q-input dense v-model="name" label="Name" outlined />
-        <q-input dense v-model="address" label="Address" outlined />
-        <q-input dense v-model="coordinates" label="Coordinates" outlined :rules="[]" />
-        <q-input dense v-model="post_code" label="Post code" outlined :rules="[]" />
-        <q-toggle v-model="isDelete" label="Delete" />
+        <q-input dense v-model="serialNumber" label="Serial Number" outlined />
+        <q-input dense v-model="installationDate" label="Installation date" outlined type="date" />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn label="Cancel" color="primary" @click="closeModal" />
@@ -22,7 +20,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
-import { updateMeter } from '@/api/api'
+import { updateMeter } from '@/api/metersApi'
 
 const props = defineProps<{
   state?: any
@@ -30,11 +28,9 @@ const props = defineProps<{
 }>()
 const childState = reactive(props.state)
 const $toast = useToast()
-const address = ref()
-const coordinates = ref()
+const installationDate = ref()
+const serialNumber = ref()
 const name = ref()
-const post_code = ref()
-const isDelete = ref(false)
 
 const closeModal = () => {
   childState.modalOpen = false
@@ -44,15 +40,13 @@ const makeUpdate = async () => {
   try {
     const result = await updateMeter(
       props.modalData.id,
-      isDelete.value,
+      false,
       name.value,
-      address.value,
-      post_code.value,
-      coordinates.value
+      serialNumber.value,
+      installationDate.value
     )
     $toast.success(result)
-    address.value = name.value = coordinates.value = post_code.value = isDelete.value = false
-    childState.modalOpen = false
+    installationDate.value = name.value = serialNumber.value = childState.modalOpen = false
     window.location.reload()
   } catch (e: any) {
     $toast.error(e.response.data)

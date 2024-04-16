@@ -6,10 +6,17 @@
       </q-card-section>
       <q-card-section>
         <q-input dense v-model="name" label="Name" outlined />
-        <q-input dense v-model="address" label="Address" outlined />
-        <q-input dense v-model="coordinates" label="Coordinates" outlined :rules="[]" />
-        <q-input dense v-model="post_code" label="Post code" outlined :rules="[]" />
-        <q-toggle v-model="isDelete" label="Delete" />
+        <q-select
+          v-model="is_main"
+          :options="[
+            { label: 'Yes', value: true },
+            { label: 'No', value: false }
+          ]"
+          label="Main"
+          outlined
+        />
+        <p></p>
+        <q-input dense v-model="installationDate" label="installationDate" type="date" outlined />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn label="Cancel" color="primary" @click="closeModal" />
@@ -22,7 +29,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
-import { updateCircuit } from '@/api/api'
+import { updateCircuit } from '@/api/circuitsApi'
 
 const props = defineProps<{
   state?: any
@@ -30,11 +37,9 @@ const props = defineProps<{
 }>()
 const childState = reactive(props.state)
 const $toast = useToast()
-const address = ref()
-const coordinates = ref()
 const name = ref()
-const post_code = ref()
-const isDelete = ref(false)
+const is_main = ref()
+const installationDate = ref()
 
 const closeModal = () => {
   childState.modalOpen = false
@@ -44,15 +49,13 @@ const makeUpdate = async () => {
   try {
     const result = await updateCircuit(
       props.modalData.id,
-      isDelete.value,
+      false,
       name.value,
-      address.value,
-      post_code.value,
-      coordinates.value
+      is_main.value.value,
+      installationDate.value
     )
     $toast.success(result)
-    address.value = name.value = coordinates.value = post_code.value = isDelete.value = false
-    childState.modalOpen = false
+    name.value = is_main.value = installationDate.value = childState.modalOpen = false
     window.location.reload()
   } catch (e: any) {
     $toast.error(e.response.data)

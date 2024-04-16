@@ -2,7 +2,7 @@
   <q-dialog v-model="childState.modalOpen">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Create Neeeew Customer</div>
+        <div class="text-h6">Create new customer</div>
       </q-card-section>
       <q-card-section>
         <q-input dense v-model="name" label="Name" outlined />
@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
-import { createNewCustomer } from '@/api/api'
 import { emailRule } from '@/helpers/validators'
+import { createNewCustomer } from '@/api/customersApi'
 
 const props = defineProps<{
   state?: any
