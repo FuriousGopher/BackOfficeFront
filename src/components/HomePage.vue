@@ -60,21 +60,65 @@
               </div>
               <div class="text-h4 q-mb-md">Customers</div>
               <q-table :rows="customers" row-key="name" flat bordered @row-click="get" />
+
               <h7>Click on customer to open info</h7>
             </q-tab-panel>
 
             <q-tab-panel name="sites">
               <div class="text-h4 q-mb-md">Sites</div>
-              <q-table :rows="sites" row-key="name" flat bordered />
+              <q-table
+                :rows="sites"
+                row-key="name"
+                flat
+                bordered
+                :columns="columnsView.siteColumns"
+              >
+                <template v-slot:body-cell-action="{ row }">
+                  <q-td>
+                    <div class="row justify-center">
+                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                    </div>
+                  </q-td>
+                </template>
+              </q-table>
             </q-tab-panel>
 
             <q-tab-panel name="meters">
               <div class="text-h4 q-mb-md">Meters</div>
-              <q-table :rows="meters" row-key="name" flat bordered />
+              <q-table
+                :rows="meters"
+                row-key="name"
+                flat
+                bordered
+                :columns="columnsView.meterColumns"
+              >
+                <template v-slot:body-cell-action="{ row }">
+                  <q-td>
+                    <div class="row justify-center">
+                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                    </div>
+                  </q-td>
+                </template>
+              </q-table>
             </q-tab-panel>
+
             <q-tab-panel name="circuits">
               <div class="text-h4 q-mb-md">Circuits</div>
-              <q-table :rows="meters" row-key="name" flat bordered />
+              <q-table
+                :rows="meters"
+                row-key="name"
+                flat
+                bordered
+                :columns="columnsView.circuitColumns"
+              >
+                <template v-slot:body-cell-action="{ row }">
+                  <q-td>
+                    <div class="row justify-center">
+                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                    </div>
+                  </q-td>
+                </template>
+              </q-table>
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -102,10 +146,16 @@ import router from '@/router/index.ts'
 import { Loading } from 'quasar'
 import RegisterNewAgent from '@/components/RegisterNewAgent.vue'
 import CreateNewCustomer from '@/components/CreateNewCustomer.vue'
+import { columnsView } from '@/helpers/columnsView.ts'
 
 const $toast = useToast()
 
 export default {
+  computed: {
+    columnsView() {
+      return columnsView
+    }
+  },
   components: { CreateNewCustomer, RegisterNewAgent },
   setup() {
     const drawer = ref(false)
@@ -170,6 +220,10 @@ export default {
       stateAgent.modalOpen = false
     }
 
+    const handleButtonClick = async (props) => {
+      console.log(props)
+    }
+
     return {
       drawer,
       customers,
@@ -183,7 +237,8 @@ export default {
       openAgentModal,
       openCustomerModal,
       stateCustomer,
-      stateAgent
+      stateAgent,
+      handleButtonClick
     }
   }
 }

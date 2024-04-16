@@ -63,20 +63,78 @@
                 <q-btn color="primary" icon="delete" label="Customer" @click="prompt = true" />
               </div>
               <div class="text-h4 q-mb-md">Customer info</div>
-              <q-table :rows="customerData" row-key="name" flat bordered />
+              <q-table
+                :rows="customerData"
+                row-key="name"
+                flat
+                bordered
+                :columns="columnsView.customerColumns"
+              >
+                <template v-slot:body-cell-action="{ row }">
+                  <q-td>
+                    <div class="row justify-center">
+                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                    </div>
+                  </q-td>
+                </template>
+              </q-table>
             </q-tab-panel>
 
             <q-tab-panel name="sites">
               <div class="text-h4 q-mb-md">Sites</div>
-              <q-table :rows="customerSites" row-key="name" flat bordered />
+              <q-table
+                :rows="customerSites"
+                row-key="name"
+                flat
+                bordered
+                :columns="columnsView.siteColumns"
+              >
+                <template v-slot:body-cell-action="{ row }">
+                  <q-td>
+                    <div class="row justify-center">
+                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                    </div>
+                  </q-td>
+                </template>
+              </q-table>
             </q-tab-panel>
+
             <q-tab-panel name="meters">
               <div class="text-h4 q-mb-md">Meters</div>
-              <q-table :rows="customerMeters" row-key="name" flat bordered />
+              <q-table
+                :rows="customerMeters"
+                row-key="name"
+                flat
+                bordered
+                :columns="columnsView.meterColumns"
+              >
+                <template v-slot:body-cell-action="{ row }">
+                  <q-td>
+                    <div class="row justify-center">
+                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                    </div>
+                  </q-td>
+                </template>
+              </q-table>
             </q-tab-panel>
+
             <q-tab-panel name="circuits">
               <div class="text-h4 q-mb-md">Circuits</div>
-              <q-table :rows="customerCircuits" row-key="name" flat bordered />
+              <q-table
+                :rows="customerCircuits"
+                row-key="name"
+                flat
+                bordered
+                :columns="columnsView.circuitColumns"
+              >
+                <template v-slot:body-cell-action="{ row }">
+                  <q-td>
+                    <div class="row justify-center">
+                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                    </div>
+                  </q-td>
+                </template>
+              </q-table>
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -104,11 +162,28 @@ import { Loading } from 'quasar'
 import { deleteCustomer, getAllCompanyInfo, logoutAgent } from '@/api/api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { columnsView } from '@/helpers/columnsView.ts'
 
 const $toast = useToast()
 
 export default {
+  computed: {
+    columnsView() {
+      return columnsView
+    }
+  },
   setup() {
+    const columns = [
+      {
+        name: 'Id',
+        required: true,
+        label: 'Dessert (100g serving)',
+        align: 'left',
+        field: (row) => row.id,
+        format: (val) => `${val}`,
+        sortable: true
+      }
+    ]
     const drawer = ref(false)
     const customerData = ref([])
     const customerSites = ref([])
@@ -130,7 +205,6 @@ export default {
         customerCircuits.value = allInfo.allCircuits || []
         Loading.hide()
         $toast.success('All data is loaded successfully')
-        console.log()
       } catch (e) {
         $toast.error(e.response)
         Loading.hide()
@@ -166,6 +240,10 @@ export default {
       Loading.hide()
     }
 
+    const handleButtonClick = async (props) => {
+      console.log(props)
+    }
+
     return {
       drawer,
       tab,
@@ -176,7 +254,9 @@ export default {
       customerCircuits,
       goBack,
       prompt,
-      confirmDelete
+      confirmDelete,
+      columns,
+      handleButtonClick
     }
   }
 }
