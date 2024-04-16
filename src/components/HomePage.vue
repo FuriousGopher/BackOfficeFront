@@ -76,6 +76,7 @@
                   <q-td>
                     <div class="row justify-center">
                       <q-btn @click="openSiteModal(row)" icon="edit" />
+                      <q-btn @click="deleteRowSite(row.id)" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -140,7 +141,8 @@ import {
   getAllCustomers,
   getAllMeters,
   getAllSites,
-  logoutAgent
+  logoutAgent,
+  updateSite
 } from '@/api/api.ts'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
@@ -238,6 +240,17 @@ export default {
       stateMeter.modalOpen = true
     }
 
+    const deleteRowSite = async (id) => {
+      try {
+        const result = await updateSite(id, true)
+        $toast.success(result)
+        window.location.reload()
+      } catch (e) {
+        //TODO move to some file
+        $toast.error(e.response.data)
+      }
+    }
+
     const openCircuitsModal = (data) => {
       circuitData.value = data
       stateCircuit.modalOpen = true
@@ -282,7 +295,8 @@ export default {
       stateCircuit,
       openCircuitsModal,
       openMeterModal,
-      stateMeter
+      stateMeter,
+      deleteRowSite
     }
   }
 }

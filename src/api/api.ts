@@ -119,11 +119,11 @@ export const getAllCompanyInfo = async (id: number) => {
 
 export const updateSite = async (
   id: number,
-  name: string,
-  address: string,
-  post_code: string,
-  coordinates: string,
-  isDelete: boolean
+  isDelete?: boolean,
+  name?: string,
+  address?: string,
+  post_code?: string,
+  coordinates?: string
 ) => {
   try {
     const response = await instance.put('/site/update', {
@@ -142,11 +142,11 @@ export const updateSite = async (
 
 export const updateMeter = async (
   id: number,
+  isDelete: boolean,
   name: string,
   address: string,
   post_code: string,
-  coordinates: string,
-  isDelete: boolean
+  coordinates: string
 ) => {
   try {
     const response = await instance.put('/site/update', {
@@ -165,11 +165,11 @@ export const updateMeter = async (
 
 export const updateCustomer = async (
   id: number,
+  isDelete: boolean,
   name: string,
   address: string,
   post_code: string,
-  coordinates: string,
-  isDelete: boolean
+  coordinates: string
 ) => {
   try {
     const response = await instance.put('/site/update', {
@@ -188,11 +188,11 @@ export const updateCustomer = async (
 
 export const updateCircuit = async (
   id: number,
+  isDelete: boolean,
   name: string,
   address: string,
   post_code: string,
-  coordinates: string,
-  isDelete: boolean
+  coordinates: string
 ) => {
   try {
     const response = await instance.put('/site/update', {
