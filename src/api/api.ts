@@ -139,3 +139,72 @@ export const updateSite = async (
     throw e as Error
   }
 }
+
+export const updateMeter = async (
+  id: number,
+  name: string,
+  address: string,
+  post_code: string,
+  coordinates: string,
+  isDelete: boolean
+) => {
+  try {
+    const response = await instance.put('/site/update', {
+      id,
+      name,
+      address,
+      post_code,
+      coordinates,
+      isDelete
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const updateCustomer = async (
+  id: number,
+  name: string,
+  address: string,
+  post_code: string,
+  coordinates: string,
+  isDelete: boolean
+) => {
+  try {
+    const response = await instance.put('/site/update', {
+      id,
+      name,
+      address,
+      post_code,
+      coordinates,
+      isDelete
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const updateCircuit = async (
+  id: number,
+  name: string,
+  address: string,
+  post_code: string,
+  coordinates: string,
+  isDelete: boolean
+) => {
+  try {
+    const response = await instance.put('/site/update', {
+      id,
+      name,
+      address,
+      post_code,
+      coordinates,
+      isDelete
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}

@@ -60,7 +60,7 @@
               </div>
               <div class="text-h4 q-mb-md">Customers</div>
               <q-table :rows="customers" row-key="name" flat bordered @row-click="get" />
-              <h7>Click on customer to open info</h7>
+              <p class="click-info">Click on customer to open info</p>
             </q-tab-panel>
 
             <q-tab-panel name="sites">
@@ -94,7 +94,7 @@
                 <template v-slot:body-cell-action="{ row }">
                   <q-td>
                     <div class="row justify-center">
-                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                      <q-btn @click="openMeterModal(row)" icon="edit" />
                     </div>
                   </q-td>
                 </template>
@@ -113,7 +113,7 @@
                 <template v-slot:body-cell-action="{ row }">
                   <q-td>
                     <div class="row justify-center">
-                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                      <q-btn @click="openCircuitsModal(row)" icon="edit" />
                     </div>
                   </q-td>
                 </template>
@@ -127,7 +127,9 @@
   <div>
     <RegisterNewAgent :state="stateAgent" />
     <CreateNewCustomer :state="stateCustomer" />
-    <UpdateSiteModal :state="stateSite" :modalData="modalData" />
+    <UpdateSiteModal :state="stateSite" :modalData="siteData" />
+    <UpdateMeterModal :state="stateMeter" :modalData="meterData" />
+    <UpdateCircuitModal :state="stateCircuit" :modalData="circuitData" />
   </div>
 </template>
 
@@ -148,6 +150,8 @@ import RegisterNewAgent from '@/Modals/RegisterNewAgent.vue'
 import CreateNewCustomer from '@/Modals/CreateNewCustomer.vue'
 import { columnsView } from '@/helpers/columnsView.ts'
 import UpdateSiteModal from '@/Modals/UpdateSiteModal.vue'
+import UpdateMeterModal from '@/Modals/UpdateMeterModal.vue'
+import UpdateCircuitModal from '@/Modals/UpdateCircuitModal.vue'
 
 const $toast = useToast()
 
@@ -157,7 +161,13 @@ export default {
       return columnsView
     }
   },
-  components: { UpdateSiteModal, CreateNewCustomer, RegisterNewAgent },
+  components: {
+    UpdateCircuitModal,
+    UpdateMeterModal,
+    UpdateSiteModal,
+    CreateNewCustomer,
+    RegisterNewAgent
+  },
   setup() {
     const drawer = ref(false)
     const customers = ref([])
@@ -168,7 +178,11 @@ export default {
     const stateAgent = reactive({ modalOpen: false })
     const stateCustomer = reactive({ modalOpen: false })
     const stateSite = reactive({ modalOpen: false })
-    const modalData = ref(null)
+    const stateMeter = reactive({ modalOpen: false })
+    const stateCircuit = reactive({ modalOpen: false })
+    const siteData = ref(null)
+    const meterData = ref(null)
+    const circuitData = ref(null)
 
     onMounted(async () => {
       try {
@@ -215,8 +229,18 @@ export default {
     }
 
     const openSiteModal = (data) => {
-      modalData.value = data
+      siteData.value = data
       stateSite.modalOpen = true
+    }
+
+    const openMeterModal = (data) => {
+      meterData.value = data
+      stateMeter.modalOpen = true
+    }
+
+    const openCircuitsModal = (data) => {
+      circuitData.value = data
+      stateCircuit.modalOpen = true
     }
 
     const openCustomerModal = () => {
@@ -227,6 +251,8 @@ export default {
       stateCustomer.modalOpen = false
       stateAgent.modalOpen = false
       stateSite.modalOpen = false
+      stateMeter.modalOpen = false
+      stateCircuit.modalOpen = false
     }
 
     const handleButtonClick = async (props) => {
@@ -250,7 +276,13 @@ export default {
       handleButtonClick,
       openSiteModal,
       stateSite,
-      modalData
+      siteData,
+      circuitData,
+      meterData,
+      stateCircuit,
+      openCircuitsModal,
+      openMeterModal,
+      stateMeter
     }
   }
 }
@@ -282,5 +314,10 @@ button {
 .add-customer {
   display: flex;
   flex-direction: row-reverse;
+}
+
+.click-info {
+  font-size: 16px;
+  color: #4a148c;
 }
 </style>
