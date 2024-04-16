@@ -60,7 +60,12 @@
           >
             <q-tab-panel name="customer">
               <div class="delete-customer">
-                <q-btn color="primary" icon="delete" label="Customer" @click="prompt = true" />
+                <q-btn
+                  color="primary"
+                  icon="delete"
+                  label="Customer"
+                  @click="deleteModalState = true"
+                />
               </div>
               <div class="text-h4 q-mb-md">Customer info</div>
               <q-table
@@ -141,14 +146,14 @@
       </q-page-container>
     </q-layout>
   </div>
-  <q-dialog v-model="prompt">
+  <q-dialog v-model="deleteModalState">
     <q-card>
       <q-card-section class="text-h6">Confirm Deletion</q-card-section>
       <q-card-section>
         {{ `Are you sure you want to delete ${customerData[0].name} customer ?` }}
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn label="Cancel" color="primary" @click="prompt = false" />
+        <q-btn label="Cancel" color="primary" @click="deleteModalState = false" />
         <q-btn label="Delete" color="negative" @click="confirmDelete" />
       </q-card-actions>
     </q-card>
@@ -173,24 +178,13 @@ export default {
     }
   },
   setup() {
-    const columns = [
-      {
-        name: 'Id',
-        required: true,
-        label: 'Dessert (100g serving)',
-        align: 'left',
-        field: (row) => row.id,
-        format: (val) => `${val}`,
-        sortable: true
-      }
-    ]
     const drawer = ref(false)
     const customerData = ref([])
     const customerSites = ref([])
     const customerMeters = ref([])
     const customerCircuits = ref([])
     const tab = ref('customer')
-    const prompt = ref(false)
+    const deleteModalState = ref(false)
 
     const route = useRoute()
     const id = +route.query.id
@@ -226,7 +220,7 @@ export default {
       try {
         await deleteCustomer(id, true)
         $toast.success('Customer deleted successfully')
-        prompt.value = false
+        deleteModalState.value = false
         router.push('/home')
       } catch (e) {
         $toast.error(e.response.data)
@@ -241,7 +235,7 @@ export default {
     }
 
     const handleButtonClick = async (props) => {
-      console.log(props)
+      console.log(props) //TODO dont forget to add this modal
     }
 
     return {
@@ -253,9 +247,8 @@ export default {
       customerMeters,
       customerCircuits,
       goBack,
-      prompt,
+      deleteModalState,
       confirmDelete,
-      columns,
       handleButtonClick
     }
   }
