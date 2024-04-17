@@ -30,6 +30,16 @@ export const getAllCompanyInfo = async (id: number) => {
     throw e as Error
   }
 }
+
+export const getAllCompanyInfoForClient = async (id: number) => {
+  try {
+    const response = await axiosInstance.get(`/client/getAllInfo?id=${id}`)
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
 export const updateCustomer = async (
   id: number,
   isDelete?: boolean,
@@ -44,6 +54,18 @@ export const updateCustomer = async (
       name,
       email,
       vat_number
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}
+
+export const customerLogin = async (email: number, vatNumber: string) => {
+  try {
+    const response = await axiosInstance.post('/client/login', {
+      email,
+      vatNumber
     })
     return await response.data
   } catch (e) {

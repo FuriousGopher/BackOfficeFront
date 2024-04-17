@@ -3,25 +3,21 @@
     <div class="login-header">
       <img src="/logo-home.png" alt="logo" />
     </div>
-    <div class="title">Back Office</div>
+    <div class="title">Client Zone</div>
     <div class="login-board">
       <div class="login-container">
         <h4>Login</h4>
-        <form @submit.prevent="userLogin">
+        <form @submit.prevent="clientLogin">
           <div class="form-group">
             <label for="username">Email:</label>
             <input type="text" id="username" v-model="email" required />
           </div>
           <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" v-model="password" required />
+            <label for="vatNumber">Vat number:</label>
+            <input type="text" id="vatNumber" v-model="vatNumber" required />
           </div>
           <button type="submit">Login</button>
         </form>
-        <p>If you dont have access ask your manager</p>
-        <div class="client-button">
-          <button @click="clientLogin">I'm a client</button>
-        </div>
       </div>
     </div>
   </div>
@@ -32,25 +28,16 @@ import { ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
-import { login } from '@/api/agentApi.ts'
+import { customerLogin } from '@/api/customersApi.ts'
 
-const email = ref('testIvan@gmail.com')
-const password = ref('q1w2e3r4')
+const email = ref('cardis@bing.com')
+const vatNumber = ref('8484484844')
 const $toast = useToast()
-
-const userLogin = async () => {
-  try {
-    await login({ email: email.value, password: password.value })
-    $toast.success('Successfully logged in')
-    router.push('/home')
-  } catch (e) {
-    $toast.error(e.response.data)
-  }
-}
 
 const clientLogin = async () => {
   try {
-    router.push('/client')
+    const result = await customerLogin(email.value, vatNumber.value)
+    router.push({ path: '/client-company-page', query: { id: result } })
   } catch (e) {
     $toast.error(e.response.data)
   }
