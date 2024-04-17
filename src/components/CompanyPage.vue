@@ -86,6 +86,14 @@
             </q-tab-panel>
 
             <q-tab-panel name="sites">
+              <div class="delete-customer">
+                <q-btn
+                  color="primary"
+                  icon="add"
+                  label="Site"
+                  @click="openCreateSiteModal(customerData)"
+                />
+              </div>
               <div class="text-h4 q-mb-md">Sites</div>
               <q-table
                 :rows="customerSites"
@@ -106,6 +114,14 @@
             </q-tab-panel>
 
             <q-tab-panel name="meters">
+              <div class="delete-customer">
+                <q-btn
+                  color="primary"
+                  icon="add"
+                  label="Meter"
+                  @click="openCreateMeterModal(customerSites)"
+                />
+              </div>
               <div class="text-h4 q-mb-md">Meters</div>
               <q-table
                 :rows="customerMeters"
@@ -126,6 +142,14 @@
             </q-tab-panel>
 
             <q-tab-panel name="circuits">
+              <div class="delete-customer">
+                <q-btn
+                  color="primary"
+                  icon="add"
+                  label="Circuit"
+                  @click="openCreateCircuitModal(customerMeters)"
+                />
+              </div>
               <div class="text-h4 q-mb-md">Circuits</div>
               <q-table
                 :rows="customerCircuits"
@@ -165,6 +189,9 @@
   <UpdateSiteModal :state="stateSite" :modalData="site" />
   <UpdateMeterModal :state="stateMeter" :modalData="meter" />
   <UpdateCircuitModal :state="stateCircuit" :modalData="circuits" />
+  <CreateNewSite :state="stateCreateSite" :modalData="customer" />
+  <CreateNewMeter :state="stateCreateMeter" :modalData="site" />
+  <CreateNewCircuit :state="stateCreateCircuit" :modalData="meter" />
 </template>
 
 <script>
@@ -181,12 +208,23 @@ import UpdateCustomerModal from '@/Modals/UpdateCustomerModal.vue'
 import UpdateMeterModal from '@/Modals/UpdateMeterModal.vue'
 import UpdateCircuitModal from '@/Modals/UpdateCircuitModal.vue'
 import UpdateSiteModal from '@/Modals/UpdateSiteModal.vue'
+import CreateNewMeter from '@/Modals/CreateNewMeter.vue'
+import CreateNewCircuit from '@/Modals/CreateNewCircuit.vue'
+import CreateNewSite from '@/Modals/CreateNewSite.vue'
 
 const $toast = useToast()
 
 export default {
   methods: { confirmDelete },
-  components: { UpdateSiteModal, UpdateCircuitModal, UpdateMeterModal, UpdateCustomerModal },
+  components: {
+    CreateNewSite,
+    CreateNewCircuit,
+    CreateNewMeter,
+    UpdateSiteModal,
+    UpdateCircuitModal,
+    UpdateMeterModal,
+    UpdateCustomerModal
+  },
   computed: {
     columnsView() {
       return columnsView
@@ -204,6 +242,9 @@ export default {
     const stateSite = reactive({ modalOpen: false })
     const stateMeter = reactive({ modalOpen: false })
     const stateCircuit = reactive({ modalOpen: false })
+    const stateCreateSite = reactive({ modalOpen: false })
+    const stateCreateMeter = reactive({ modalOpen: false })
+    const stateCreateCircuit = reactive({ modalOpen: false })
     const customer = ref(null)
     const site = ref(null)
     const meter = ref(null)
@@ -262,11 +303,28 @@ export default {
       stateCustomer.modalOpen = true
     }
 
+    const openCreateSiteModal = (data) => {
+      customer.value = data
+      stateCreateSite.modalOpen = true
+    }
+
+    const openCreateMeterModal = (data) => {
+      site.value = data
+      stateCreateMeter.modalOpen = true
+    }
+
+    const openCreateCircuitModal = (data) => {
+      meter.value = data
+      stateCreateCircuit.modalOpen = true
+    }
+
     const closeModal = () => {
       stateCustomer.modalOpen = false
       stateSite.modalOpen = false
       stateMeter.modalOpen = false
       stateCircuit.modalOpen = false
+      stateCreateSite.modalOpen = false
+      stateCreateMeter.modalOpen = false
     }
 
     const openSiteModal = (data) => {
@@ -307,7 +365,13 @@ export default {
       stateMeter,
       meter,
       stateCircuit,
-      circuits
+      circuits,
+      stateCreateSite,
+      stateCreateMeter,
+      stateCreateCircuit,
+      openCreateSiteModal,
+      openCreateMeterModal,
+      openCreateCircuitModal
     }
   }
 }

@@ -2,50 +2,57 @@
   <q-dialog v-model="childState.modalOpen">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Create new customer</div>
+        <div class="text-h6">Create new site for customer</div>
+        <div class="text-h6">{{ props.modalData[0].name }}</div>
       </q-card-section>
       <q-card-section>
         <q-input dense v-model="name" label="Name" outlined />
-        <q-input dense v-model="vatNumber" label="Vat number" outlined />
-        <q-input dense v-model="email" label="Email" outlined :rules="[emailRule]" />
+        <q-input dense v-model="address" label="Address" outlined />
+        <q-input dense v-model="coordinates" label="Coordinates" outlined :rules="[]" />
+        <q-input dense v-model="post_code" label="Post code" outlined :rules="[]" />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn label="Cancel" color="primary" @click="closeModal" />
-        <q-btn label="Create" color="primary" @click="registerAgent" :disable="!validForm" />
+        <q-btn label="Create" color="primary" @click="registerSite" />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
-import { emailRule } from '@/helpers/validators'
-import { createNewCustomer } from '@/api/customersApi'
+import { createNewSite } from '@/api/sitesApi'
 
 const props = defineProps<{
   state?: any
+  modalData: any
 }>()
 const childState = reactive(props.state)
 const $toast = useToast()
-const email = ref('')
-const name = ref('')
-const vatNumber = ref('')
-
-const validForm = computed(() => {
-  return emailRule(email.value) === true
-})
+const address = ref()
+const coordinates = ref()
+const name = ref()
+const post_code = ref()
 
 const closeModal = () => {
   childState.modalOpen = false
 }
-const registerAgent = async () => {
+
+const registerSite = async () => {
   try {
-    const result = await createNewCustomer(name.value, email.value, vatNumber.value)
+    const result = await createNewSite(
+      props.modalData[0].id.toString(),
+      name.value,
+      coordinates.value,
+      address.value,
+      post_code.value
+    )
     $toast.success(result)
-    email.value = ''
+    coordinates.value = ''
     name.value = ''
-    vatNumber.value = ''
+    address.value = ''
+    post_code.value = ''
     childState.modalOpen = false
     window.location.reload()
   } catch (e: any) {

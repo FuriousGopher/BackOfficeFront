@@ -8,6 +8,7 @@ export const getAllCustomers = async () => {
     throw e as Error
   }
 }
+
 export const createNewCustomer = async (name: string, email: string, vatNumber: string) => {
   try {
     const response = await axiosInstance.post(`/customer/create`, {

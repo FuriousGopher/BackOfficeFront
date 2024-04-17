@@ -29,3 +29,23 @@ export const updateCircuit = async (
     throw e as Error
   }
 }
+
+export const createNewCircuit = async (
+  id: string,
+  name: string,
+  is_main: boolean,
+  installationDate: Date
+) => {
+  const meterId = id.value.toString()
+  try {
+    const response = await axiosInstance.post(`/circuit/create`, {
+      meterId,
+      name,
+      is_main,
+      installationDate
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}

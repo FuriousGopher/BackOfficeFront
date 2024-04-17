@@ -28,3 +28,23 @@ export const updateMeter = async (
     throw e as Error
   }
 }
+
+export const createNewMeter = async (
+  id: string,
+  name: string,
+  serialNumber: string,
+  installationDate: Date
+) => {
+  const siteId = id.value.toString()
+  try {
+    const response = await axiosInstance.post(`/meter/create`, {
+      siteId,
+      name,
+      serialNumber,
+      installationDate
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}

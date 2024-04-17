@@ -30,3 +30,24 @@ export const updateSite = async (
     throw e as Error
   }
 }
+
+export const createNewSite = async (
+  customerId: string,
+  name: string,
+  coordinates: string,
+  address: string,
+  post_code: string
+) => {
+  try {
+    const response = await axiosInstance.post(`/site/create`, {
+      customerId,
+      name,
+      coordinates,
+      address,
+      post_code
+    })
+    return await response.data
+  } catch (e) {
+    throw e as Error
+  }
+}

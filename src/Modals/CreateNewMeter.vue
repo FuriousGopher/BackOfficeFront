@@ -2,16 +2,23 @@
   <q-dialog v-model="childState.modalOpen">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Create new customer</div>
+        <div class="text-h6">Create new meter</div>
       </q-card-section>
       <q-card-section>
+        <q-select
+          v-model="selectedOption"
+          label="Choose a site to connect"
+          outlined
+          :options="options"
+        />
+        <p></p>
         <q-input dense v-model="name" label="Name" outlined />
-        <q-input dense v-model="vatNumber" label="Vat number" outlined />
-        <q-input dense v-model="email" label="Email" outlined :rules="[emailRule]" />
+        <q-input dense v-model="serialNumber" label="Serial Number" outlined />
+        <q-input dense v-model="installationDate" label="Installation date" outlined type="date" />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn label="Cancel" color="primary" @click="closeModal" />
-        <q-btn label="Create" color="primary" @click="registerAgent" :disable="!validForm" />
+        <q-btn label="Create" color="primary" @click="registerMeter" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -20,38 +27,41 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
-import { emailRule } from '@/helpers/validators'
-import { createNewCustomer } from '@/api/customersApi'
+import { createNewMeter } from '@/api/metersApi'
 
 const props = defineProps<{
   state?: any
+  modalData: any
 }>()
 const childState = reactive(props.state)
 const $toast = useToast()
-const email = ref('')
-const name = ref('')
-const vatNumber = ref('')
-
-const validForm = computed(() => {
-  return emailRule(email.value) === true
-})
+const installationDate = ref()
+const serialNumber = ref()
+const name = ref()
+const selectedOption = ref()
 
 const closeModal = () => {
   childState.modalOpen = false
 }
-const registerAgent = async () => {
+const registerMeter = async () => {
   try {
-    const result = await createNewCustomer(name.value, email.value, vatNumber.value)
+    const result = await createNewMeter(
+      selectedOption.value,
+      name.value,
+      serialNumber.value,
+      installationDate.value
+    )
     $toast.success(result)
-    email.value = ''
-    name.value = ''
-    vatNumber.value = ''
-    childState.modalOpen = false
+    installationDate.value = name.value = serialNumber.value = childState.modalOpen = false
     window.location.reload()
   } catch (e: any) {
     $toast.error(e.response.data)
   }
 }
+
+const options = computed(() => {
+  return props.modalData.map((item: any) => ({ label: item.name, value: item.id }))
+})
 </script>
 
 <style scoped>
