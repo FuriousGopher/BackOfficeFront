@@ -35,6 +35,7 @@ export const createNewMeter = async (
   serialNumber: string,
   installationDate: Date
 ) => {
+  // @ts-ignore
   const siteId = id.value.toString()
   try {
     const response = await axiosInstance.post(`/meter/create`, {

@@ -36,6 +36,7 @@ export const createNewCircuit = async (
   is_main: boolean,
   installationDate: Date
 ) => {
+  // @ts-ignore
   const meterId = id.value.toString()
   try {
     const response = await axiosInstance.post(`/circuit/create`, {
