@@ -30,8 +30,8 @@ import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
 import { customerLogin } from '@/api/customersApi.ts'
 
-const email = ref('cardis@bing.com')
-const vatNumber = ref('8484484844')
+const email = ref('')
+const vatNumber = ref('')
 const $toast = useToast()
 
 const clientLogin = async () => {

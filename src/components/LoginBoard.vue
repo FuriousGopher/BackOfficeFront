@@ -34,8 +34,8 @@ import 'vue-toast-notification/dist/theme-sugar.css'
 import router from '@/router/index.ts'
 import { login } from '@/api/agentApi.ts'
 
-const email = ref('testIvan@gmail.com')
-const password = ref('q1w2e3r4')
+const email = ref('')
+const password = ref('')
 const $toast = useToast()
 
 const userLogin = async () => {
