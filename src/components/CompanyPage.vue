@@ -78,7 +78,7 @@
                 <template v-slot:body-cell-action="{ row }">
                   <q-td>
                     <div class="row justify-center">
-                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                      <q-btn @click="openCustomerModal(row)" icon="edit" />
                     </div>
                   </q-td>
                 </template>
@@ -97,7 +97,8 @@
                 <template v-slot:body-cell-action="{ row }">
                   <q-td>
                     <div class="row justify-center">
-                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                      <q-btn @click="openSiteModal(row)" icon="edit" />
+                      <q-btn @click="confirmDelete(row, 'site')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -116,7 +117,8 @@
                 <template v-slot:body-cell-action="{ row }">
                   <q-td>
                     <div class="row justify-center">
-                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                      <q-btn @click="openMeterModal(row)" icon="edit" />
+                      <q-btn @click="confirmDelete(row, 'meter')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -135,7 +137,8 @@
                 <template v-slot:body-cell-action="{ row }">
                   <q-td>
                     <div class="row justify-center">
-                      <q-btn @click="handleButtonClick(row)" icon="edit" />
+                      <q-btn @click="openCircuitsModal(row)" icon="edit" />
+                      <q-btn @click="confirmDelete(row, 'circuit')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -152,28 +155,38 @@
       <q-card-section>
         {{ `Are you sure you want to delete ${customerData[0].name}  customer ?` }}
       </q-card-section>
-      <q-card-actions align="right">
+      <q-card-actions align="around">
         <q-btn label="Cancel" color="primary" @click="deleteModalState = false" />
-        <q-btn label="Delete" color="negative" @click="confirmDelete" />
+        <q-btn label="Delete" color="negative" @click="confirmDeleteCustomer" />
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <UpdateCustomerModal :state="stateCustomer" :modalData="customer" />
+  <UpdateSiteModal :state="stateSite" :modalData="site" />
+  <UpdateMeterModal :state="stateMeter" :modalData="meter" />
+  <UpdateCircuitModal :state="stateCircuit" :modalData="circuits" />
 </template>
 
 <script>
 import { useToast } from 'vue-toast-notification'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { Loading } from 'quasar'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { columnsView } from '@/helpers/columnsView.ts'
 import { getAllCompanyInfo } from '@/api/customersApi.ts'
 import { logoutAgent } from '@/api/agentApi.ts'
-import { callDeleteRow } from '@/helpers/utils.ts'
+import { callDeleteRow, confirmDelete } from '@/helpers/utils.ts'
+import UpdateCustomerModal from '@/Modals/UpdateCustomerModal.vue'
+import UpdateMeterModal from '@/Modals/UpdateMeterModal.vue'
+import UpdateCircuitModal from '@/Modals/UpdateCircuitModal.vue'
+import UpdateSiteModal from '@/Modals/UpdateSiteModal.vue'
 
 const $toast = useToast()
 
 export default {
+  methods: { confirmDelete },
+  components: { UpdateSiteModal, UpdateCircuitModal, UpdateMeterModal, UpdateCustomerModal },
   computed: {
     columnsView() {
       return columnsView
@@ -187,6 +200,14 @@ export default {
     const customerCircuits = ref([])
     const tab = ref('customer')
     const deleteModalState = ref(false)
+    const stateCustomer = reactive({ modalOpen: false })
+    const stateSite = reactive({ modalOpen: false })
+    const stateMeter = reactive({ modalOpen: false })
+    const stateCircuit = reactive({ modalOpen: false })
+    const customer = ref(null)
+    const site = ref(null)
+    const meter = ref(null)
+    const circuits = ref(null)
 
     const route = useRoute()
     const id = +route.query.id
@@ -199,7 +220,6 @@ export default {
         customerSites.value = allInfo.sites || []
         customerMeters.value = allInfo.meters || []
         customerCircuits.value = allInfo.circuits || []
-        console.log(allInfo)
         Loading.hide()
         $toast.success('All data is loaded successfully')
       } catch (e) {
@@ -219,7 +239,7 @@ export default {
       }
     }
 
-    const confirmDelete = async () => {
+    const confirmDeleteCustomer = async () => {
       try {
         await callDeleteRow(id, true, 'customer')
         $toast.success('Customer deleted successfully')
@@ -237,8 +257,31 @@ export default {
       Loading.hide()
     }
 
-    const handleButtonClick = async (props) => {
-      console.log(props) //TODO dont forget to add this modal
+    const openCustomerModal = (data) => {
+      customer.value = data
+      stateCustomer.modalOpen = true
+    }
+
+    const closeModal = () => {
+      stateCustomer.modalOpen = false
+      stateSite.modalOpen = false
+      stateMeter.modalOpen = false
+      stateCircuit.modalOpen = false
+    }
+
+    const openSiteModal = (data) => {
+      site.value = data
+      stateSite.modalOpen = true
+    }
+
+    const openMeterModal = (data) => {
+      meter.value = data
+      stateMeter.modalOpen = true
+    }
+
+    const openCircuitsModal = (data) => {
+      circuits.value = data
+      stateCircuit.modalOpen = true
     }
 
     return {
@@ -251,8 +294,20 @@ export default {
       customerCircuits,
       goBack,
       deleteModalState,
-      confirmDelete,
-      handleButtonClick
+      confirmDeleteCustomer,
+      openCustomerModal,
+      stateCustomer,
+      customer,
+      closeModal,
+      openSiteModal,
+      openMeterModal,
+      openCircuitsModal,
+      stateSite,
+      site,
+      stateMeter,
+      meter,
+      stateCircuit,
+      circuits
     }
   }
 }

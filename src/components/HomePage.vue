@@ -83,7 +83,7 @@
                   <q-td>
                     <div class="row justify-center">
                       <q-btn @click="openSiteModal(row)" icon="edit" />
-                      <q-btn @click="deleteOneRow(row.id, 'site')" icon="delete" />
+                      <q-btn @click="confirmDelete(row, 'site')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -103,7 +103,7 @@
                   <q-td>
                     <div class="row justify-center">
                       <q-btn @click="openMeterModal(row)" icon="edit" />
-                      <q-btn @click="deleteOneRow(row.id, 'meter')" icon="delete" />
+                      <q-btn @click="confirmDelete(row, 'meter')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -123,7 +123,7 @@
                   <q-td>
                     <div class="row justify-center">
                       <q-btn @click="openCircuitsModal(row)" icon="edit" />
-                      <q-btn @click="deleteOneRow(row.id, 'circuit')" icon="delete" />
+                      <q-btn @click="confirmDelete(row, 'circuit')" icon="delete" />
                     </div>
                   </q-td>
                 </template>
@@ -160,11 +160,12 @@ import { getAllSites } from '@/api/sitesApi.ts'
 import { getAllMeters } from '@/api/metersApi.ts'
 import { getAllCircuits } from '@/api/circuitsApi.ts'
 import { logoutAgent } from '@/api/agentApi.ts'
-import { callDeleteRow } from '@/helpers/utils.ts'
+import { confirmDelete } from '@/helpers/utils.ts'
 
 const $toast = useToast()
 
 export default {
+  methods: { confirmDelete },
   computed: {
     columnsView() {
       return columnsView
@@ -247,16 +248,6 @@ export default {
       stateMeter.modalOpen = true
     }
 
-    const deleteOneRow = async (id, name) => {
-      try {
-        const result = await callDeleteRow(id, true, name)
-        $toast.success(result)
-        window.location.reload()
-      } catch (e) {
-        $toast.error(e.response.data.errorsMessages[0].message)
-      }
-    }
-
     const openCircuitsModal = (data) => {
       circuitData.value = data
       stateCircuit.modalOpen = true
@@ -274,10 +265,6 @@ export default {
       stateCircuit.modalOpen = false
     }
 
-    const handleButtonClick = async (props) => {
-      console.log(props)
-    }
-
     return {
       drawer,
       customers,
@@ -292,7 +279,6 @@ export default {
       openCustomerModal,
       stateCustomer,
       stateAgent,
-      handleButtonClick,
       openSiteModal,
       stateSite,
       siteData,
@@ -301,8 +287,7 @@ export default {
       stateCircuit,
       openCircuitsModal,
       openMeterModal,
-      stateMeter,
-      deleteOneRow
+      stateMeter
     }
   }
 }

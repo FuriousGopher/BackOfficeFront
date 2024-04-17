@@ -2,13 +2,13 @@
   <q-dialog v-model="childState.modalOpen">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Update customer {{ props.modalData.name }}</div>
+        <div class="text-h6">Update customer</div>
+        <div class="text-h6">{{ props.modalData.name }}</div>
       </q-card-section>
       <q-card-section>
         <q-input dense v-model="name" label="Name" outlined />
-        <q-input dense v-model="address" label="Address" outlined />
-        <q-input dense v-model="coordinates" label="Coordinates" outlined :rules="[]" />
-        <q-input dense v-model="post_code" label="Post code" outlined :rules="[]" />
+        <q-input dense v-model="email" label="Email" outlined type="email" />
+        <q-input dense v-model="vat_number" label="Vat number" outlined />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn label="Cancel" color="primary" @click="closeModal" />
@@ -29,10 +29,9 @@ const props = defineProps<{
 }>()
 const childState = reactive(props.state)
 const $toast = useToast()
-const address = ref()
-const coordinates = ref()
 const name = ref()
-const post_code = ref()
+const email = ref()
+const vat_number = ref()
 
 const closeModal = () => {
   childState.modalOpen = false
@@ -42,13 +41,13 @@ const makeUpdate = async () => {
   try {
     const result = await updateCustomer(
       props.modalData.id,
+      false,
       name.value,
-      address.value,
-      post_code.value,
-      coordinates.value
+      email.value,
+      vat_number.value
     )
     $toast.success(result)
-    address.value = name.value = coordinates.value = post_code.value = childState.modalOpen = false
+    name.value = email.value = vat_number.value = childState.modalOpen = false
     window.location.reload()
   } catch (e: any) {
     $toast.error(e.response.data)
@@ -70,11 +69,6 @@ const makeUpdate = async () => {
 
 .q-card-section {
   padding: 20px;
-}
-
-.text-h6 {
-  font-size: 1.25rem;
-  font-weight: bold;
 }
 
 .q-input {

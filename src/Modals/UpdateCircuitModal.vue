@@ -2,7 +2,8 @@
   <q-dialog v-model="childState.modalOpen">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Update circuit {{ props.modalData.name }}</div>
+        <div class="text-h6">Update circuit</div>
+        <div class="text-h6">{{ props.modalData.name }}</div>
       </q-card-section>
       <q-card-section>
         <q-input dense v-model="name" label="Name" outlined />

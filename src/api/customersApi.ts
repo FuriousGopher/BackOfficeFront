@@ -33,18 +33,16 @@ export const updateCustomer = async (
   id: number,
   isDelete?: boolean,
   name?: string,
-  address?: string,
-  post_code?: string,
-  coordinates?: string
+  email?: string,
+  vat_number?: string
 ) => {
   try {
     const response = await axiosInstance.put('/customer/update', {
       id,
+      isDelete,
       name,
-      address,
-      post_code,
-      coordinates,
-      isDelete
+      email,
+      vat_number
     })
     return await response.data
   } catch (e) {
