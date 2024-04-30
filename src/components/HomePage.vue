@@ -143,7 +143,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-sugar.css'
@@ -164,132 +164,77 @@ import { confirmDelete } from '@/helpers/utils.ts'
 
 const $toast = useToast()
 
-export default {
-  methods: { confirmDelete },
-  computed: {
-    columnsView() {
-      return columnsView
-    }
-  },
-  components: {
-    UpdateCircuitModal,
-    UpdateMeterModal,
-    UpdateSiteModal,
-    CreateNewCustomer,
-    RegisterNewAgent
-  },
-  setup() {
-    const drawer = ref(false)
-    const customers = ref([])
-    const meters = ref([])
-    const sites = ref([])
-    const circuits = ref([])
-    const tab = ref('customers')
-    const stateAgent = reactive({ modalOpen: false })
-    const stateCustomer = reactive({ modalOpen: false })
-    const stateSite = reactive({ modalOpen: false })
-    const stateMeter = reactive({ modalOpen: false })
-    const stateCircuit = reactive({ modalOpen: false })
-    const siteData = ref(null)
-    const meterData = ref(null)
-    const circuitData = ref(null)
+const drawer = ref(false)
+const customers = ref([])
+const meters = ref([])
+const sites = ref([])
+const circuits = ref([])
+const tab = ref('customers')
+const stateAgent = reactive({ modalOpen: false })
+const stateCustomer = reactive({ modalOpen: false })
+const stateSite = reactive({ modalOpen: false })
+const stateMeter = reactive({ modalOpen: false })
+const stateCircuit = reactive({ modalOpen: false })
+const siteData = ref(null)
+const meterData = ref(null)
+const circuitData = ref(null)
 
-    onMounted(async () => {
-      try {
-        Loading.show()
-        const [customersPromise, sitesPromise, metersPromise, circuitsPromise] =
-          await Promise.allSettled([
-            getAllCustomers(),
-            getAllSites(),
-            getAllMeters(),
-            getAllCircuits()
-          ])
-        customers.value = customersPromise.value
-        sites.value = sitesPromise.value
-        meters.value = metersPromise.value
-        circuits.value = circuitsPromise.value
-        Loading.hide()
-        $toast.success('All data is loaded successfully')
-      } catch (e) {
-        $toast.error(e.response.data)
-      }
-    })
-
-    const logout = async () => {
-      try {
-        await logoutAgent()
-        $toast.success('Logged out successfully')
-        router.push('/')
-      } catch (e) {
-        $toast.error(e.response.data)
-        router.push('/')
-      }
-    }
-
-    const get = async (_props, row) => {
-      try {
-        router.push({ path: '/company', query: { id: row.id } })
-      } catch (e) {
-        $toast.error(e)
-      }
-    }
-
-    const openAgentModal = () => {
-      stateAgent.modalOpen = true
-    }
-
-    const openSiteModal = (data) => {
-      siteData.value = data
-      stateSite.modalOpen = true
-    }
-
-    const openMeterModal = (data) => {
-      meterData.value = data
-      stateMeter.modalOpen = true
-    }
-
-    const openCircuitsModal = (data) => {
-      circuitData.value = data
-      stateCircuit.modalOpen = true
-    }
-
-    const openCustomerModal = () => {
-      stateCustomer.modalOpen = true
-    }
-
-    const closeModal = () => {
-      stateCustomer.modalOpen = false
-      stateAgent.modalOpen = false
-      stateSite.modalOpen = false
-      stateMeter.modalOpen = false
-      stateCircuit.modalOpen = false
-    }
-
-    return {
-      drawer,
-      customers,
-      logout,
-      tab,
-      get,
-      meters,
-      sites,
-      circuits,
-      closeModal,
-      openAgentModal,
-      openCustomerModal,
-      stateCustomer,
-      stateAgent,
-      openSiteModal,
-      stateSite,
-      siteData,
-      circuitData,
-      meterData,
-      stateCircuit,
-      openCircuitsModal,
-      openMeterModal,
-      stateMeter
-    }
+onMounted(async () => {
+  try {
+    Loading.show()
+    const [customersPromise, sitesPromise, metersPromise, circuitsPromise] =
+      await Promise.allSettled([getAllCustomers(), getAllSites(), getAllMeters(), getAllCircuits()])
+    customers.value = customersPromise.value
+    sites.value = sitesPromise.value
+    meters.value = metersPromise.value
+    circuits.value = circuitsPromise.value
+    Loading.hide()
+    $toast.success('All data is loaded successfully')
+  } catch (e) {
+    $toast.error(e.response.data)
   }
+})
+
+const logout = async () => {
+  try {
+    await logoutAgent()
+    $toast.success('Logged out successfully')
+    router.push('/')
+  } catch (e) {
+    $toast.error(e.response.data)
+    router.push('/')
+  }
+}
+
+const get = async (_props, row) => {
+  try {
+    router.push({ path: '/company', query: { id: row.id } })
+  } catch (e) {
+    $toast.error(e)
+  }
+}
+
+const openAgentModal = () => {
+  stateAgent.modalOpen = true
+}
+
+const openSiteModal = (data) => {
+  siteData.value = data
+  stateSite.modalOpen = true
+}
+
+const openMeterModal = (data) => {
+  meterData.value = data
+  stateMeter.modalOpen = true
+}
+
+const openCircuitsModal = (data) => {
+  circuitData.value = data
+  stateCircuit.modalOpen = true
+}
+
+const openCustomerModal = () => {
+  stateCustomer.modalOpen = true
 }
 </script>
 

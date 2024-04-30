@@ -108,7 +108,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { useToast } from 'vue-toast-notification'
 import { onMounted, ref } from 'vue'
 import { Loading } from 'quasar'
@@ -116,19 +116,9 @@ import router from '@/router'
 import { useRoute } from 'vue-router'
 import { columnsView } from '@/helpers/columnsView.ts'
 import { getAllCompanyInfoForClient } from '@/api/customersApi.ts'
-import { logoutAgent } from '@/api/agentApi.ts'
-import { confirmDelete } from '@/helpers/utils.ts'
 
 const $toast = useToast()
 
-export default {
-  methods: { confirmDelete },
-  computed: {
-    columnsView() {
-      return columnsView
-    }
-  },
-  setup() {
     const drawer = ref(false)
     const customerData = ref([])
     const customerSites = ref([])
@@ -156,37 +146,7 @@ export default {
     })
 
     const logout = async () => {
-      try {
-        await logoutAgent()
         $toast.success('Logged out successfully')
         router.push('/')
-      } catch (e) {
-        $toast.error(e.response.data)
-        router.push('/')
-      }
-    }
-
-    return {
-      drawer,
-      tab,
-      logout,
-      customerData,
-      customerSites,
-      customerMeters,
-      customerCircuits
-    }
-  }
 }
 </script>
-
-<style scoped>
-.back {
-  position: fixed;
-  left: 10px;
-}
-
-.delete-customer {
-  display: flex;
-  flex-direction: row-reverse;
-}
-</style>

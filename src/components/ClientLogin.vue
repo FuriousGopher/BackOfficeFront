@@ -1,19 +1,18 @@
 <template>
   <div class="login-wrapper">
     <div class="login-header">
-      <img src="/logo-home.png" alt="logo" />
+      <img src="/backOffice.png" alt="logo" />
     </div>
-    <div class="title">Client Zone</div>
     <div class="login-board">
       <div class="login-container">
         <h4>Login</h4>
         <form @submit.prevent="clientLogin">
           <div class="form-group">
-            <label for="username">Email:</label>
+            <label for="username">Email: cardis@bing.com</label>
             <input type="text" id="username" v-model="email" required />
           </div>
           <div class="form-group">
-            <label for="vatNumber">Vat number:</label>
+            <label for="vatNumber">Vat number: 8484484844</label>
             <input type="text" id="vatNumber" v-model="vatNumber" required />
           </div>
           <button type="submit">Login</button>
@@ -47,13 +46,12 @@ const clientLogin = async () => {
 <style scoped>
 .login-board {
   display: flex;
-  height: calc(80vh - 200px);
 }
 
 .login-container {
   justify-content: center;
   align-items: center;
-  padding: 40px 80px;
+  padding: 50px ;
   margin: auto;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -99,16 +97,6 @@ button {
 }
 
 .login-header {
-  text-align: center;
-}
-
-.login-header > img {
-  width: 500px;
-  height: 150px;
-}
-
-.title {
-  font-size: 40px;
   text-align: center;
 }
 

@@ -194,7 +194,7 @@
   <CreateNewCircuit :state="stateCreateCircuit" :modalData="meter" />
 </template>
 
-<script>
+<script setup>
 import { useToast } from 'vue-toast-notification'
 import { onMounted, reactive, ref } from 'vue'
 import { Loading } from 'quasar'
@@ -214,23 +214,6 @@ import CreateNewSite from '@/Modals/CreateNewSite.vue'
 
 const $toast = useToast()
 
-export default {
-  methods: { confirmDelete },
-  components: {
-    CreateNewSite,
-    CreateNewCircuit,
-    CreateNewMeter,
-    UpdateSiteModal,
-    UpdateCircuitModal,
-    UpdateMeterModal,
-    UpdateCustomerModal
-  },
-  computed: {
-    columnsView() {
-      return columnsView
-    }
-  },
-  setup() {
     const drawer = ref(false)
     const customerData = ref([])
     const customerSites = ref([])
@@ -342,39 +325,6 @@ export default {
       stateCircuit.modalOpen = true
     }
 
-    return {
-      drawer,
-      tab,
-      logout,
-      customerData,
-      customerSites,
-      customerMeters,
-      customerCircuits,
-      goBack,
-      deleteModalState,
-      confirmDeleteCustomer,
-      openCustomerModal,
-      stateCustomer,
-      customer,
-      closeModal,
-      openSiteModal,
-      openMeterModal,
-      openCircuitsModal,
-      stateSite,
-      site,
-      stateMeter,
-      meter,
-      stateCircuit,
-      circuits,
-      stateCreateSite,
-      stateCreateMeter,
-      stateCreateCircuit,
-      openCreateSiteModal,
-      openCreateMeterModal,
-      openCreateCircuitModal
-    }
-  }
-}
 </script>
 
 <style scoped>

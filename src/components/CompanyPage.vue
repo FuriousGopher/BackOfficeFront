@@ -194,7 +194,7 @@
   <CreateNewCircuit :state="stateCreateCircuit" :modalData="meter" />
 </template>
 
-<script>
+<script setup>
 import { useToast } from 'vue-toast-notification'
 import { onMounted, reactive, ref } from 'vue'
 import { Loading } from 'quasar'
@@ -214,166 +214,106 @@ import CreateNewSite from '@/Modals/CreateNewSite.vue'
 
 const $toast = useToast()
 
-export default {
-  methods: { confirmDelete },
-  components: {
-    CreateNewSite,
-    CreateNewCircuit,
-    CreateNewMeter,
-    UpdateSiteModal,
-    UpdateCircuitModal,
-    UpdateMeterModal,
-    UpdateCustomerModal
-  },
-  computed: {
-    columnsView() {
-      return columnsView
-    }
-  },
-  setup() {
-    const drawer = ref(false)
-    const customerData = ref([])
-    const customerSites = ref([])
-    const customerMeters = ref([])
-    const customerCircuits = ref([])
-    const tab = ref('customer')
-    const deleteModalState = ref(false)
-    const stateCustomer = reactive({ modalOpen: false })
-    const stateSite = reactive({ modalOpen: false })
-    const stateMeter = reactive({ modalOpen: false })
-    const stateCircuit = reactive({ modalOpen: false })
-    const stateCreateSite = reactive({ modalOpen: false })
-    const stateCreateMeter = reactive({ modalOpen: false })
-    const stateCreateCircuit = reactive({ modalOpen: false })
-    const customer = ref(null)
-    const site = ref(null)
-    const meter = ref(null)
-    const circuits = ref(null)
+const drawer = ref(false)
+const customerData = ref([])
+const customerSites = ref([])
+const customerMeters = ref([])
+const customerCircuits = ref([])
+const tab = ref('customer')
+const deleteModalState = ref(false)
+const stateCustomer = reactive({ modalOpen: false })
+const stateSite = reactive({ modalOpen: false })
+const stateMeter = reactive({ modalOpen: false })
+const stateCircuit = reactive({ modalOpen: false })
+const stateCreateSite = reactive({ modalOpen: false })
+const stateCreateMeter = reactive({ modalOpen: false })
+const stateCreateCircuit = reactive({ modalOpen: false })
+const customer = ref(null)
+const site = ref(null)
+const meter = ref(null)
+const circuits = ref(null)
 
-    const route = useRoute()
-    const id = +route.query.id
+const route = useRoute()
+const id = +route.query.id
 
-    onMounted(async () => {
-      try {
-        Loading.show()
-        const allInfo = await getAllCompanyInfo(id)
-        customerData.value = allInfo.customer || []
-        customerSites.value = allInfo.sites || []
-        customerMeters.value = allInfo.meters || []
-        customerCircuits.value = allInfo.circuits || []
-        Loading.hide()
-        $toast.success('All data is loaded successfully')
-      } catch (e) {
-        $toast.error(e.response)
-        Loading.hide()
-      }
-    })
-
-    const logout = async () => {
-      try {
-        await logoutAgent()
-        $toast.success('Logged out successfully')
-        router.push('/')
-      } catch (e) {
-        $toast.error(e.response.data)
-        router.push('/')
-      }
-    }
-
-    const confirmDeleteCustomer = async () => {
-      try {
-        await callDeleteRow(id, true, 'customer')
-        $toast.success('Customer deleted successfully')
-        deleteModalState.value = false
-        router.push('/home')
-      } catch (e) {
-        $toast.error(e.response.data)
-      }
-    }
-
-    const goBack = async () => {
-      Loading.show()
-      router.push('/home')
-      $toast.success('Back home')
-      Loading.hide()
-    }
-
-    const openCustomerModal = (data) => {
-      customer.value = data
-      stateCustomer.modalOpen = true
-    }
-
-    const openCreateSiteModal = (data) => {
-      customer.value = data
-      stateCreateSite.modalOpen = true
-    }
-
-    const openCreateMeterModal = (data) => {
-      site.value = data
-      stateCreateMeter.modalOpen = true
-    }
-
-    const openCreateCircuitModal = (data) => {
-      meter.value = data
-      stateCreateCircuit.modalOpen = true
-    }
-
-    const closeModal = () => {
-      stateCustomer.modalOpen = false
-      stateSite.modalOpen = false
-      stateMeter.modalOpen = false
-      stateCircuit.modalOpen = false
-      stateCreateSite.modalOpen = false
-      stateCreateMeter.modalOpen = false
-    }
-
-    const openSiteModal = (data) => {
-      site.value = data
-      stateSite.modalOpen = true
-    }
-
-    const openMeterModal = (data) => {
-      meter.value = data
-      stateMeter.modalOpen = true
-    }
-
-    const openCircuitsModal = (data) => {
-      circuits.value = data
-      stateCircuit.modalOpen = true
-    }
-
-    return {
-      drawer,
-      tab,
-      logout,
-      customerData,
-      customerSites,
-      customerMeters,
-      customerCircuits,
-      goBack,
-      deleteModalState,
-      confirmDeleteCustomer,
-      openCustomerModal,
-      stateCustomer,
-      customer,
-      closeModal,
-      openSiteModal,
-      openMeterModal,
-      openCircuitsModal,
-      stateSite,
-      site,
-      stateMeter,
-      meter,
-      stateCircuit,
-      circuits,
-      stateCreateSite,
-      stateCreateMeter,
-      stateCreateCircuit,
-      openCreateSiteModal,
-      openCreateMeterModal,
-      openCreateCircuitModal
-    }
+onMounted(async () => {
+  try {
+    Loading.show()
+    const allInfo = await getAllCompanyInfo(id)
+    customerData.value = allInfo.customer || []
+    customerSites.value = allInfo.sites || []
+    customerMeters.value = allInfo.meters || []
+    customerCircuits.value = allInfo.circuits || []
+    Loading.hide()
+    $toast.success('All data is loaded successfully')
+  } catch (e) {
+    $toast.error(e.response)
+    Loading.hide()
   }
+})
+
+const logout = async () => {
+  try {
+    await logoutAgent()
+    $toast.success('Logged out successfully')
+    router.push('/')
+  } catch (e) {
+    $toast.error(e.response.data)
+    router.push('/')
+  }
+}
+
+const confirmDeleteCustomer = async () => {
+  try {
+    await callDeleteRow(id, true, 'customer')
+    $toast.success('Customer deleted successfully')
+    deleteModalState.value = false
+    router.push('/home')
+  } catch (e) {
+    $toast.error(e.response.data)
+  }
+}
+
+const goBack = async () => {
+  Loading.show()
+  router.push('/home')
+  $toast.success('Back home')
+  Loading.hide()
+}
+
+const openCustomerModal = (data) => {
+  customer.value = data
+  stateCustomer.modalOpen = true
+}
+
+const openCreateSiteModal = (data) => {
+  customer.value = data
+  stateCreateSite.modalOpen = true
+}
+
+const openCreateMeterModal = (data) => {
+  site.value = data
+  stateCreateMeter.modalOpen = true
+}
+
+const openCreateCircuitModal = (data) => {
+  meter.value = data
+  stateCreateCircuit.modalOpen = true
+}
+
+const openSiteModal = (data) => {
+  site.value = data
+  stateSite.modalOpen = true
+}
+
+const openMeterModal = (data) => {
+  meter.value = data
+  stateMeter.modalOpen = true
+}
+
+const openCircuitsModal = (data) => {
+  circuits.value = data
+  stateCircuit.modalOpen = true
 }
 </script>
 

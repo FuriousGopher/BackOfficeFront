@@ -1,19 +1,18 @@
 <template>
   <div class="login-wrapper">
     <div class="login-header">
-      <img src="/logo-home.png" alt="logo" />
+      <img src="/backOffice.png" alt="logo" />
     </div>
-    <div class="title">Back Office</div>
     <div class="login-board">
       <div class="login-container">
         <h4>Login</h4>
         <form @submit.prevent="userLogin">
           <div class="form-group">
-            <label for="username">Email:</label>
+            <label for="username">Email: testIvan@gmail.com</label>
             <input type="text" id="username" v-model="email" required />
           </div>
           <div class="form-group">
-            <label for="password">Password:</label>
+            <label for="password">Password: q1w2e3r4</label>
             <input type="password" id="password" v-model="password" required />
           </div>
           <button type="submit">Login</button>
@@ -109,27 +108,15 @@ button {
   background-color: #007bff;
   color: #fff;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .login-header {
   text-align: center;
-}
-
-.login-header > img {
-  width: 500px;
-  height: 150px;
-}
-
-.title {
-  font-size: 40px;
-  text-align: center;
+  margin-bottom: -60px;
 }
 
 button:hover {
   background-color: #0056b3;
-}
-
-p {
-  margin-top: 10px;
 }
 </style>
